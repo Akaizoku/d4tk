@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cow Kill Tracker — Diablo IV</title>
+<style>
+  :root {
+    --bg: #0c0a09;
+    --panel: #141110;
+    --panel-2: #1a1614;
+    --border: #3a2e26;
+    --border-hi: #6b4f33;
+    --blood: #8a1c1c;
+    --blood-hi: #c1352c;
+    --text: #c9bba6;
+    --text-dim: #7d7160;
+    --gold: #c9a34a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(138,28,28,.22), transparent),
+      var(--bg);
+    color: var(--text);
+    font-family: Georgia, 'Times New Roman', serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; width: 100%; }
+
+  .topnav {
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border-bottom: 1px solid var(--border-hi);
+    box-shadow: 0 2px 14px rgba(138,28,28,.25);
+    margin-bottom: 2.2rem;
+  }
+  .topnav .inner {
+    max-width: 880px; margin: 0 auto;
+    display: flex; align-items: center; flex-wrap: wrap;
+    padding: 0 1rem;
+  }
+  .topnav .brand {
+    color: #e8dcc3; letter-spacing: .18em; text-transform: uppercase;
+    font-size: .8rem; padding: .7rem 1.2rem .7rem 0;
+    text-shadow: 0 0 10px rgba(193,53,44,.5);
+  }
+  .topnav .brand .bl { color: var(--blood-hi); }
+  .topnav a.tool {
+    color: var(--text-dim); text-decoration: none;
+    letter-spacing: .12em; text-transform: uppercase;
+    font-size: .72rem;
+    padding: .7rem 1.1rem;
+    border-left: 1px solid var(--border);
+    transition: color .2s, background .2s;
+  }
+  .topnav a.tool:hover { color: #e8dcc3; background: rgba(138,28,28,.12); }
+  .topnav a.tool.active {
+    color: var(--gold);
+    background: rgba(138,28,28,.18);
+    box-shadow: inset 0 -2px 0 var(--blood-hi);
+  }
+  .topnav .spacer { flex: 1; }
+
+  main {
+    flex: 1; display: flex; justify-content: center; align-items: flex-start;
+    padding: 0 1rem 4rem;
+  }
+  .counter-container {
+    text-align: center;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 24px rgba(0,0,0,.6), 0 0 40px rgba(138,28,28,.12);
+    padding: 2rem;
+    width: 340px;
+  }
+  .page-title {
+    text-align: center; letter-spacing: .14em; text-transform: uppercase;
+    color: #e8dcc3; font-weight: normal; font-size: 1.15rem;
+    text-shadow: 0 0 14px rgba(193,53,44,.45);
+    margin-bottom: 1.4rem;
+  }
+  .page-title .bl { color: var(--blood-hi); }
+  .hint {
+    color: var(--text-dim); font-size: .72rem; font-style: italic;
+    margin-top: 1rem; line-height: 1.6;
+  }
+
+  .top-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1rem;
+  }
+  .timer {
+    font-size: 1.2rem; color: var(--text-dim);
+    letter-spacing: .08em;
+  }
+  .counter-value {
+    font-size: 3.4rem; margin: 1rem 0;
+    color: var(--gold);
+    text-shadow: 0 0 16px rgba(201,163,74,.35), 0 2px 2px #000;
+  }
+  .button-row {
+    display: flex; justify-content: center; margin-top: 1rem; gap: .5rem;
+  }
+  .bottom-row {
+    display: flex; justify-content: space-between; margin-top: 1rem;
+  }
+  button {
+    font-size: 1rem; padding: .25rem; cursor: pointer;
+    background: var(--panel-2); color: var(--text);
+    border: 1px solid var(--border-hi);
+    width: 40px; height: 40px;
+    display: flex; justify-content: center; align-items: center;
+    transition: background .15s, border-color .15s, color .15s;
+    font-family: inherit;
+  }
+  button:hover {
+    background: var(--blood); border-color: var(--blood-hi); color: #f3e6c8;
+  }
+  .undo-redo-button { font-size: .85rem; color: var(--text-dim); }
+  .undo-redo-button:hover { color: #f3e6c8; }
+
+  footer {
+    text-align: center; margin-top: auto;
+    padding: 1.2rem; color: var(--text-dim);
+    font-size: .78rem; font-style: italic;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body tabindex="0">
+<div class="wrap">
+  <nav class="topnav">
+    <div class="inner">
+      <span class="brand">D4 <span class="bl">Toolkit</span></span>
+      <span class="spacer"></span>
+      <a class="tool" href="index.html">Fish Tracker</a>
+      <a class="tool active" href="cow.html">Cow Kills</a>
+    </div>
+  </nav>
+</div>
+<main>
+  <div>
+    <h1 class="page-title">Cow <span class="bl">Kill</span> Tracker</h1>
+    <div class="counter-container">
+      <div class="top-row">
+        <button id="timerButton">▶</button>
+        <div class="timer" id="timer">00:00:00</div>
+        <button id="resetButton">↻</button>
+      </div>
+      <div class="counter-value" id="counter">0</div>
+      <div class="button-row">
+        <button id="decButton">−</button>
+        <button id="incButton">+</button>
+      </div>
+      <div class="bottom-row">
+        <button class="undo-redo-button" id="undoButton">↩</button>
+        <button class="undo-redo-button" id="redoButton">↪</button>
+      </div>
+      <p class="hint">Press 1–9 to add kills · Ctrl+Z undo · Ctrl+Y redo<br>Timer starts on your first kill.</p>
+    </div>
+  </div>
+</main>
+<footer>Unofficial fan-made tool for Diablo IV · progress is saved in your browser.</footer>
+
+<script>
+(function () {
+  'use strict';
+  var LS = 'd4-cow-tracker-v1';
+  var state = {
+    count: 0, elapsedTime: 0, hasStarted: false,
+    history: [], historyIndex: -1
+  };
+  try {
+    var saved = JSON.parse(localStorage.getItem(LS));
+    if (saved) {
+      state.count = saved.count || 0;
+      state.elapsedTime = saved.elapsedTime || 0;
+      state.hasStarted = !!saved.hasStarted;
+      state.history = saved.history || [];
+      state.historyIndex = typeof saved.historyIndex === 'number' ? saved.historyIndex : -1;
+    }
+  } catch (e) {}
+
+  var timerInterval = null, startTime = 0, isTimerRunning = false;
+  var counterElement = document.getElementById('counter');
+  var timerElement = document.getElementById('timer');
+  var timerButton = document.getElementById('timerButton');
+
+  function save() {
+    try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {}
+  }
+
+  function updateCounter() {
+    counterElement.textContent = state.count;
+    save();
+  }
+
+  function saveToHistory() {
+    if (state.historyIndex < state.history.length - 1) {
+      state.history = state.history.slice(0, state.historyIndex + 1);
+    }
+    if (state.history[state.historyIndex] === state.count) { save(); return; }
+    state.history.push(state.count);
+    state.historyIndex = state.history.length - 1;
+    save();
+  }
+
+  function ensureTimer() {
+    if (!isTimerRunning) startTimer();
+  }
+
+  function increment() {
+    ensureTimer();
+    state.count += 1;
+    updateCounter();
+    saveToHistory();
+  }
+
+  function decrement() {
+    ensureTimer();
+    state.count = Math.max(0, state.count - 1);
+    updateCounter();
+    saveToHistory();
+  }
+
+  function resetCounter() {
+    if (!confirm('Slaughter anew? The counter and timer will be reset.')) return;
+    state.count = 0;
+    updateCounter();
+    saveToHistory();
+    resetTimer();
+  }
+
+  function formatTime(ms) {
+    var date = new Date(ms);
+    var h = String(date.getUTCHours()).padStart(2, '0');
+    var m = String(date.getUTCMinutes()).padStart(2, '0');
+    var s = String(date.getUTCSeconds()).padStart(2, '0');
+    return h + ':' + m + ':' + s;
+  }
+
+  function updateTimer() {
+    if (isTimerRunning) {
+      state.elapsedTime = Date.now() - startTime;
+      timerElement.textContent = formatTime(state.elapsedTime);
+      save();
+    }
+  }
+
+  function startTimer() {
+    if (isTimerRunning) return;
+    startTime = Date.now() - state.elapsedTime;
+    timerInterval = setInterval(updateTimer, 1000);
+    isTimerRunning = true;
+    state.hasStarted = true;
+    timerButton.textContent = '⏸';
+    save();
+  }
+
+  function pauseTimer() {
+    if (!isTimerRunning) return;
+    clearInterval(timerInterval);
+    isTimerRunning = false;
+    timerButton.textContent = '▶';
+  }
+
+  function toggleTimer() {
+    if (isTimerRunning) pauseTimer(); else startTimer();
+  }
+
+  function resetTimer() {
+    pauseTimer();
+    state.elapsedTime = 0;
+    timerElement.textContent = '00:00:00';
+    state.hasStarted = false;
+    timerButton.textContent = '▶';
+    save();
+  }
+
+  function undo() {
+    if (state.historyIndex > 0) {
+      state.historyIndex--;
+      state.count = state.history[state.historyIndex];
+      updateCounter();
+    }
+  }
+
+  function redo() {
+    if (state.historyIndex < state.history.length - 1) {
+      state.historyIndex++;
+      state.count = state.history[state.historyIndex];
+      updateCounter();
+    }
+  }
+
+  document.addEventListener('keydown', function (event) {
+    var key = event.key;
+    if (!isNaN(key) && key !== ' ' && key !== '') {
+      ensureTimer();
+      var value = parseInt(key);
+      if (value >= 1 && value <= 9) {
+        state.count = Math.max(0, state.count + value);
+        updateCounter();
+        saveToHistory();
+      }
+    } else if (event.ctrlKey) {
+      if (event.key === 'z') undo();
+      else if (event.key === 'y') redo();
+    }
+  });
+
+  updateCounter();
+  timerElement.textContent = formatTime(state.elapsedTime);
+  if (state.history.length === 0) {
+    state.history.push(state.count);
+    state.historyIndex = 0;
+    save();
+  }
+  if (state.hasStarted) startTimer();
+
+  document.getElementById('incButton').addEventListener('click', increment);
+  document.getElementById('decButton').addEventListener('click', decrement);
+  document.getElementById('undoButton').addEventListener('click', undo);
+  document.getElementById('redoButton').addEventListener('click', redo);
+  timerButton.addEventListener('click', toggleTimer);
+  document.getElementById('resetButton').addEventListener('click', resetCounter);
+})();
+</script>
+</body>
+</html>

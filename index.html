@@ -36,6 +36,39 @@
   }
   .wrap { max-width: 880px; margin: 0 auto; }
 
+  .topnav {
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border-bottom: 1px solid var(--border-hi);
+    box-shadow: 0 2px 14px rgba(138,28,28,.25);
+    margin-bottom: 2.2rem;
+  }
+  .topnav .inner {
+    max-width: 880px; margin: 0 auto;
+    display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+    padding: 0 1rem;
+  }
+  .topnav .brand {
+    color: #e8dcc3; letter-spacing: .18em; text-transform: uppercase;
+    font-size: .8rem; padding: .7rem 1.2rem .7rem 0;
+    text-shadow: 0 0 10px rgba(193,53,44,.5);
+  }
+  .topnav .brand .bl { color: var(--blood-hi); }
+  .topnav a.tool {
+    color: var(--text-dim); text-decoration: none;
+    letter-spacing: .12em; text-transform: uppercase;
+    font-size: .72rem;
+    padding: .7rem 1.1rem;
+    border-left: 1px solid var(--border);
+    transition: color .2s, background .2s;
+  }
+  .topnav a.tool:hover { color: #e8dcc3; background: rgba(138,28,28,.12); }
+  .topnav a.tool.active {
+    color: var(--gold);
+    background: rgba(138,28,28,.18);
+    box-shadow: inset 0 -2px 0 var(--blood-hi);
+  }
+  .topnav .spacer { flex: 1; }
+
   header { text-align: center; margin-bottom: 2rem; }
   h1 {
     font-size: clamp(1.6rem, 4vw, 2.4rem);
@@ -208,6 +241,14 @@
 </head>
 <body>
 <div class="wrap">
+  <nav class="topnav">
+    <div class="inner">
+      <span class="brand">D4 <span class="bl">Toolkit</span></span>
+      <span class="spacer"></span>
+      <a class="tool active" href="index.html">Fish Tracker</a>
+      <a class="tool" href="cow.html">Cow Kills</a>
+    </div>
+  </nav>
   <header>
     <h1>Fishing <span class="bl">Tracker</span></h1>
     <p class="subtitle">A record of every fish that swims the waters of Sanctuary</p>
