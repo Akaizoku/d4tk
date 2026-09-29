@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sanctuary Angler's Ledger — Diablo IV Fish Tracker</title>
+<style>
+  :root {
+    --bg: #0c0a09;
+    --panel: #141110;
+    --panel-2: #1a1614;
+    --border: #3a2e26;
+    --border-hi: #6b4f33;
+    --blood: #8a1c1c;
+    --blood-hi: #c1352c;
+    --text: #c9bba6;
+    --text-dim: #7d7160;
+    --gold: #c9a34a;
+    --r-common: #a99f92;
+    --r-magic: #4a7fd6;
+    --r-rare: #e8c33a;
+    --r-legendary: #e07b1f;
+    --r-unique: #b04ad6;
+    --r-mythic: #d63c3c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background:
+      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(138,28,28,.22), transparent),
+      radial-gradient(ellipse 60% 40% at 90% 110%, rgba(60,20,10,.25), transparent),
+      var(--bg);
+    color: var(--text);
+    font-family: Georgia, 'Times New Roman', serif;
+    min-height: 100vh;
+    padding: 2.5rem 1rem 4rem;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 2rem; }
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #e8dcc3;
+    text-shadow: 0 0 18px rgba(193,53,44,.45), 0 2px 2px #000;
+    font-weight: normal;
+  }
+  h1 .bl { color: var(--blood-hi); }
+  .subtitle {
+    margin-top: .4rem;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: .95rem;
+    letter-spacing: .04em;
+  }
+  .divider {
+    display: flex; align-items: center; gap: .8rem;
+    margin: 1.2rem auto 0; max-width: 520px; color: var(--blood-hi);
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blood) 30%, var(--border-hi) 50%, var(--blood) 70%, transparent);
+  }
+
+  /* summary */
+  .summary {
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    justify-content: center; align-items: center;
+    margin-bottom: 1.6rem;
+    font-size: .9rem;
+  }
+  .stat {
+    background: var(--panel); border: 1px solid var(--border);
+    padding: .5rem 1rem; letter-spacing: .06em;
+  }
+  .stat b { color: var(--gold); font-size: 1.05rem; }
+  .global-bar {
+    max-width: 520px; margin: 0 auto 2rem;
+    height: 8px; background: var(--panel-2);
+    border: 1px solid var(--border); position: relative;
+  }
+  .global-bar > div {
+    height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--blood), var(--blood-hi), var(--gold));
+    transition: width .35s ease;
+  }
+
+  /* controls */
+  .controls {
+    display: flex; flex-wrap: wrap; gap: .6rem;
+    justify-content: center; margin-bottom: 2rem;
+  }
+  .controls button, .controls input {
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--border); padding: .45rem .9rem;
+    font-family: inherit; font-size: .85rem; letter-spacing: .05em;
+    cursor: pointer; transition: border-color .2s, color .2s;
+  }
+  .controls button:hover { border-color: var(--blood-hi); color: #e8dcc3; }
+  .controls input { cursor: text; width: 200px; }
+  .controls input::placeholder { color: var(--text-dim); font-style: italic; }
+  .controls input:focus { outline: none; border-color: var(--blood-hi); }
+
+  /* region sections */
+  section {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    margin-bottom: 1.4rem;
+  }
+  section > .head {
+    display: flex; align-items: center; gap: 1rem;
+    padding: .9rem 1.1rem;
+    background: linear-gradient(180deg, var(--panel-2), var(--panel));
+    border-bottom: 1px solid var(--border);
+    cursor: pointer; user-select: none;
+  }
+  section > .head:hover { border-color: var(--border-hi); }
+  .region-name {
+    font-size: 1.05rem; letter-spacing: .12em; text-transform: uppercase;
+    color: #ddd0b8; flex: 1;
+  }
+  .region-name .tag {
+    font-size: .7rem; color: var(--text-dim); letter-spacing: .06em;
+    text-transform: none; display: block; margin-top: .15rem; font-style: italic;
+  }
+  .region-count { font-size: .8rem; color: var(--text-dim); letter-spacing: .05em; }
+  .region-count b { color: var(--gold); }
+  .mini-bar {
+    width: 90px; height: 6px; background: var(--bg);
+    border: 1px solid var(--border);
+  }
+  .mini-bar > div {
+    height: 100%; width: 0;
+    background: linear-gradient(90deg, var(--blood), var(--gold));
+    transition: width .3s ease;
+  }
+  .chevron { color: var(--blood-hi); font-size: .8rem; transition: transform .25s; }
+  section.collapsed .chevron { transform: rotate(-90deg); }
+  section.collapsed .fish-list { display: none; }
+
+  .fish-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+
+  .fish {
+    display: flex; align-items: center; gap: .6rem;
+    padding: .5rem .8rem; cursor: pointer;
+    border-bottom: 1px solid rgba(58,46,38,.4);
+    transition: background .15s;
+  }
+  .fish:hover { background: rgba(138,28,28,.08); }
+  .fish input { display: none; }
+  .box {
+    width: 15px; height: 15px; flex: none;
+    border: 1px solid var(--border-hi); background: var(--bg);
+    position: relative; transition: all .15s;
+  }
+  .fish input:checked + .box { background: var(--blood); border-color: var(--blood-hi); }
+  .fish input:checked + .box::after {
+    content: '✕'; position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #f3e6c8; font-size: .7rem; line-height: 1;
+  }
+  .name { flex: 1; font-size: .92rem; }
+  .fish.caught .name { color: var(--text-dim); text-decoration: line-through; text-decoration-color: rgba(138,28,28,.7); }
+  .rarity { font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; flex: none; }
+  .r-common    { color: var(--r-common); }
+  .r-magic     { color: var(--r-magic); }
+  .r-rare      { color: var(--r-rare); }
+  .r-legendary { color: var(--r-legendary); }
+  .r-unique    { color: var(--r-unique); }
+  .r-mythic    { color: var(--r-mythic); }
+
+  footer {
+    text-align: center; margin-top: 2.5rem;
+    color: var(--text-dim); font-size: .78rem; font-style: italic;
+    line-height: 1.7;
+  }
+  footer a { color: var(--gold); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Angler's <span class="bl">Ledger</span></h1>
+    <p class="subtitle">A record of every fish that swims the waters of Sanctuary</p>
+    <div class="divider">⚜</div>
+  </header>
+
+  <div class="summary">
+    <div class="stat">Caught <b id="stat-caught">0</b> / <span id="stat-total">0</span></div>
+    <div class="stat">Regions complete <b id="stat-regions">0</b> / 8</div>
+  </div>
+  <div class="global-bar"><div id="global-fill"></div></div>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search the waters…" aria-label="Search fish">
+    <button id="btn-hide-caught">Hide Caught</button>
+    <button id="btn-expand">Collapse All</button>
+    <button id="btn-reset">Reset Ledger</button>
+  </div>
+
+  <main id="regions"></main>
+
+  <footer>
+    Unofficial fan-made tracker for Diablo IV — data per patch 3.2.x (Season 15).<br>
+    Click any fish to mark it caught · progress is saved in your browser.
+  </footer>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var LEG_TRAITS  = ['Tiny', 'Giant', 'Glittering', 'Demonic', 'Celestial', 'Spectral'];
+  var UNIQ_COMBOS = [
+    ['Tiny','Demonic'], ['Tiny','Celestial'], ['Tiny','Spectral'],
+    ['Giant','Demonic'], ['Giant','Celestial'], ['Giant','Spectral'],
+    ['Glittering','Demonic'], ['Glittering','Celestial'], ['Glittering','Spectral']
+  ];
+
+  var REGIONS = [
+    { name: 'Throughout Sanctuary', tag: 'Catchable in any body of water', fish: [
+      ['Saltfin','Common'], ['Bluescale','Common'], ['Glimmer','Common'],
+      ['Silverbelly','Magic'], ['Darkling','Magic']
+    ]},
+    { name: 'Scosglen',         base: 'Drakonbeard' },
+    { name: 'Fractured Peaks', base: 'Morayaga' },
+    { name: 'Dry Steppes',      base: 'Augur of Civo' },
+    { name: 'Kehjistan',        base: 'Zakarati' },
+    { name: 'Hawezar',          base: 'Crookfish' },
+    { name: 'Nahantu',          base: 'Neme-Senga' },
+    { name: 'Skovos',           base: 'Kokalodon' },
+    { name: 'Mythic Uniques', tag: 'Fish of legend — special waters only', fish: [
+      ['Molten Martyr','Mythic','Pools of lava'],
+      ['Ghoulworm','Mythic','Pools of blood'],
+      ['Fang of Tathamet','Mythic','Helltides'],
+      ['Dune Thresher Hatchling','Mythic','Sandy dunes'],
+      ['Vivid Whimsy','Mythic','Somewhere in Sanctuary']
+    ]},
+    { name: 'Khanduras', tag: 'Echoes of Tristram', fish: [
+      ['Red Herring','Rare']
+    ]}
+  ];
+
+  REGIONS.forEach(function (r) {
+    if (!r.fish) {
+      r.fish = [[r.base, 'Rare']];
+      LEG_TRAITS.forEach(function (t) { r.fish.push([t + ' ' + r.base, 'Legendary']); });
+      UNIQ_COMBOS.forEach(function (c) { r.fish.push([c.join(' ') + ' ' + r.base, 'Unique']); });
+    }
+    r.id = r.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  });
+
+  var STORE_KEY = 'd4-angler-ledger-v1';
+  var caught = {};
+  try { caught = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { caught = {}; }
+
+  var opts = { hideCaught: false };
+
+  var regionsEl = document.getElementById('regions');
+  var sectionEls = [];
+
+  function save() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(caught)); } catch (e) {}
+  }
+
+  function build() {
+    REGIONS.forEach(function (r) {
+      var sec = document.createElement('section');
+      sec.dataset.region = r.id;
+
+      var head = document.createElement('div');
+      head.className = 'head';
+      head.innerHTML =
+        '<span class="chevron">▼</span>' +
+        '<span class="region-name">' + r.name +
+        (r.tag ? '<span class="tag">' + r.tag + '</span>' : '') +
+        '</span>' +
+        '<span class="mini-bar"><div></div></span>' +
+        '<span class="region-count"><b>0</b> / ' + r.fish.length + '</span>';
+      head.addEventListener('click', function () { sec.classList.toggle('collapsed'); });
+      sec.appendChild(head);
+
+      var list = document.createElement('div');
+      list.className = 'fish-list';
+      r.fish.forEach(function (f) {
+        var id = r.id + ':' + f[0].toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        var note = f[2];
+        var label = document.createElement('label');
+        label.className = 'fish';
+        label.dataset.name = f[0].toLowerCase();
+        label.title = note ? r.name + ' — ' + note : r.name;
+        label.innerHTML =
+          '<input type="checkbox"' + (caught[id] ? ' checked' : '') + '>' +
+          '<span class="box"></span>' +
+          '<span class="name">' + f[0] + '</span>' +
+          '<span class="rarity r-' + f[1].toLowerCase() + '">' + f[1] + '</span>';
+        var box = label.querySelector('input');
+        box.addEventListener('change', function () {
+          if (box.checked) caught[id] = true; else delete caught[id];
+          save(); refresh();
+        });
+        list.appendChild(label);
+      });
+      sec.appendChild(list);
+      regionsEl.appendChild(sec);
+      sectionEls.push(sec);
+    });
+  }
+
+  function refresh() {
+    var total = 0, caughtCount = 0, regionsDone = 0;
+    REGIONS.forEach(function (r, i) {
+      var sec = sectionEls[i];
+      var n = 0;
+      sec.querySelectorAll('.fish').forEach(function (el) {
+        var isCaught = !!el.querySelector('input').checked;
+        el.classList.toggle('caught', isCaught);
+        el.style.display = (opts.hideCaught && isCaught) ? 'none' : '';
+        if (isCaught) n++;
+      });
+      var done = n === r.fish.length;
+      if (done) regionsDone++;
+      sec.querySelector('.region-count b').textContent = n;
+      sec.querySelector('.mini-bar div').style.width = (n / r.fish.length * 100) + '%';
+      sec.querySelector('.region-count').style.color = done ? 'var(--gold)' : '';
+      total += r.fish.length; caughtCount += n;
+    });
+    document.getElementById('stat-caught').textContent = caughtCount;
+    document.getElementById('stat-total').textContent = total;
+    document.getElementById('stat-regions').textContent = regionsDone;
+    document.getElementById('global-fill').style.width = (caughtCount / total * 100) + '%';
+    applySearch();
+  }
+
+  function applySearch() {
+    var q = document.getElementById('search').value.trim().toLowerCase();
+    sectionEls.forEach(function (sec) {
+      var any = false;
+      sec.querySelectorAll('.fish').forEach(function (el) {
+        var match = !q || el.dataset.name.indexOf(q) !== -1;
+        var hidden = opts.hideCaught && el.classList.contains('caught');
+        el.style.display = (match && !hidden) ? '' : 'none';
+        if (match && !hidden) any = true;
+      });
+      sec.style.display = any ? '' : 'none';
+    });
+  }
+
+  document.getElementById('search').addEventListener('input', applySearch);
+
+  document.getElementById('btn-hide-caught').addEventListener('click', function () {
+    opts.hideCaught = !opts.hideCaught;
+    this.textContent = opts.hideCaught ? 'Show Caught' : 'Hide Caught';
+    refresh();
+  });
+
+  document.getElementById('btn-expand').addEventListener('click', function () {
+    var anyOpen = sectionEls.some(function (s) { return !s.classList.contains('collapsed'); });
+    sectionEls.forEach(function (s) { s.classList.toggle('collapsed', anyOpen); });
+    this.textContent = anyOpen ? 'Expand All' : 'Collapse All';
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', function () {
+    if (!confirm('Cast aside the entire ledger? All progress will be lost.')) return;
+    caught = {};
+    save();
+    sectionEls.forEach(function (s) { s.querySelectorAll('input').forEach(function (i) { i.checked = false; }); });
+    refresh();
+  });
+
+  build();
+  refresh();
+})();
+</script>
+</body>
+</html>
