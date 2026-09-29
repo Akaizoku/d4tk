@@ -141,6 +141,7 @@
   .fish-list { display: block; }
 
   .rarity-group {
+    cursor: pointer;
     display: flex; align-items: center; gap: .6rem;
     padding: .4rem .8rem .35rem;
     background: var(--panel-2);
@@ -298,9 +299,9 @@
       var head = document.createElement('div');
       head.className = 'head';
       head.innerHTML =
-        '<span class="gcheck"><input type="checkbox">' +
-        '<span class="box"></span></span>' +
         '<span class="chevron">▼</span>' +
+        '<label class="gcheck"><input type="checkbox">' +
+        '<span class="box"></span></label>' +
         '<span class="region-name">' + r.name +
         (r.tag ? '<span class="tag">' + r.tag + '</span>' : '') +
         '</span>' +
@@ -332,10 +333,14 @@
         group.className = 'rarity-group';
         group.innerHTML =
           '<span class="collapse-arrow">▼</span>' +
-          '<span class="gcheck"><input type="checkbox">' +
-          '<span class="box"></span></span>' +
+          '<label class="gcheck"><input type="checkbox">' +
+          '<span class="box"></span></label>' +
           '<span class="rarity-name rarity r-' + rar.toLowerCase() + '">' + rar + '</span>' +
           '<span class="rarity-count"></span>';
+        group.addEventListener('click', function (e) {
+          if (group.querySelector('.gcheck').contains(e.target)) return;
+          group.classList.toggle('collapsed');
+        });
         var groupBox = group.querySelector('.gcheck input');
         groupBox.addEventListener('change', function () {
           byRarity[rar].forEach(function (f) {
@@ -346,10 +351,6 @@
         });
         var arrow = group.querySelector('.collapse-arrow');
         arrow.addEventListener('click', function (e) {
-          e.stopPropagation();
-          group.classList.toggle('collapsed');
-        });
-        group.querySelector('.rarity-name').addEventListener('click', function (e) {
           e.stopPropagation();
           group.classList.toggle('collapsed');
         });
