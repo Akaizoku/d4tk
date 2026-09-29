@@ -159,6 +159,10 @@
   }
   .rarity-group.collapsed .collapse-arrow { transform: rotate(-90deg); }
   .rarity-group.collapsed + .fish-grid { display: none; }
+  .fish-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
   .rarity-group .rarity-name { cursor: pointer; font-size: inherit; }
   .rarity-group .rarity-name:hover { filter: brightness(1.25); }
   .rarity-group .box { width: 13px; height: 13px; }
@@ -358,8 +362,6 @@
 
         var grid = document.createElement('div');
         grid.className = 'fish-grid';
-        grid.style.display = 'grid';
-        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
         byRarity[rar].forEach(function (f) {
           var id = r.id + ':' + f[0].toLowerCase().replace(/[^a-z0-9]+/g, '-');
           var note = f[2];
@@ -393,7 +395,9 @@
       var sec = sectionEls[i];
       var n = 0;
       sec.querySelectorAll('.fish').forEach(function (el) {
-        var isCaught = !!el.querySelector('input').checked;
+        var inp = el.querySelector('input');
+        inp.checked = !!caught[el.dataset.id];
+        var isCaught = inp.checked;
         el.classList.toggle('caught', isCaught);
         el.style.display = (opts.hideCaught && isCaught) ? 'none' : '';
         if (isCaught) n++;
