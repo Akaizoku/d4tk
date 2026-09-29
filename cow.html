@@ -64,7 +64,8 @@
   .topnav .spacer { flex: 1; }
 
   main {
-    flex: 1; display: flex; justify-content: center; align-items: flex-start;
+    flex: 1; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
     padding: 0 1rem 4rem;
   }
   .counter-container {
@@ -77,11 +78,23 @@
   }
   .page-title {
     text-align: center; letter-spacing: .14em; text-transform: uppercase;
-    color: #e8dcc3; font-weight: normal; font-size: 1.15rem;
-    text-shadow: 0 0 14px rgba(193,53,44,.45);
-    margin-bottom: 1.4rem;
+    color: #e8dcc3; font-weight: normal;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    text-shadow: 0 0 18px rgba(193,53,44,.45), 0 2px 2px #000;
   }
   .page-title .bl { color: var(--blood-hi); }
+  .page-subtitle {
+    margin-top: .4rem; color: var(--text-dim);
+    font-style: italic; font-size: .95rem; letter-spacing: .04em;
+  }
+  .divider {
+    display: flex; align-items: center; gap: .8rem;
+    margin: 1.2rem auto 1.6rem; max-width: 520px; color: var(--blood-hi);
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--blood) 30%, var(--border-hi) 50%, var(--blood) 70%, transparent);
+  }
   .hint {
     color: var(--text-dim); font-size: .72rem; font-style: italic;
     margin-top: 1rem; line-height: 1.6;
@@ -135,14 +148,18 @@
     <div class="inner">
       <span class="brand">D4 <span class="bl">Toolkit</span></span>
       <span class="spacer"></span>
-      <a class="tool" href="index.html">Fish Tracker</a>
-      <a class="tool active" href="cow.html">Cow Kills</a>
+      <a class="tool" href="index.html">Fishing</a>
+      <a class="tool active" href="cow.html">Cows</a>
     </div>
   </nav>
 </div>
 <main>
   <div>
-    <h1 class="page-title">Cow <span class="bl">Kill</span> Tracker</h1>
+    <div class="page-head">
+      <h1 class="page-title">Cow <span class="bl">Tracker</span></h1>
+      <p class="page-subtitle">Count the bovine slaughter across Sanctuary</p>
+      <div class="divider">⚜</div>
+    </div>
     <div class="counter-container">
       <div class="top-row">
         <button id="timerButton">▶</button>
