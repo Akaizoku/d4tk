@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sanctuary Angler's Ledger — Diablo IV Fish Tracker</title>
+<title>Fishing Tracker — Diablo IV</title>
 <style>
   :root {
     --bg: #0c0a09;
@@ -138,7 +138,21 @@
   section.collapsed .chevron { transform: rotate(-90deg); }
   section.collapsed .fish-list { display: none; }
 
-  .fish-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+  .fish-list { display: block; }
+
+  .rarity-group {
+    display: flex; align-items: center; gap: .6rem;
+    padding: .4rem .8rem .35rem;
+    background: var(--panel-2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid rgba(58,46,38,.4);
+    cursor: pointer; user-select: none;
+    font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
+  }
+  .rarity-group:hover .rarity-name { filter: brightness(1.25); }
+  .rarity-group .box { width: 13px; height: 13px; }
+  .rarity-group .rarity-name { font-size: inherit; }
+  .rarity-group .rarity-count { margin-left: auto; color: var(--text-dim); letter-spacing: .05em; font-size: .68rem; }
 
   .fish {
     display: flex; align-items: center; gap: .6rem;
@@ -181,7 +195,7 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Angler's <span class="bl">Ledger</span></h1>
+    <h1>Fishing <span class="bl">Tracker</span></h1>
     <p class="subtitle">A record of every fish that swims the waters of Sanctuary</p>
     <div class="divider">⚜</div>
   </header>
@@ -197,6 +211,9 @@
     <button id="btn-hide-caught">Hide Caught</button>
     <button id="btn-expand">Collapse All</button>
     <button id="btn-reset">Reset Ledger</button>
+    <button id="btn-export">Export</button>
+    <button id="btn-import">Import</button>
+    <input type="file" id="import-file" accept="application/json,.json" style="display:none">
   </div>
 
   <main id="regions"></main>
@@ -283,24 +300,51 @@
 
       var list = document.createElement('div');
       list.className = 'fish-list';
+      var byRarity = {};
       r.fish.forEach(function (f) {
-        var id = r.id + ':' + f[0].toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        var note = f[2];
-        var label = document.createElement('label');
-        label.className = 'fish';
-        label.dataset.name = f[0].toLowerCase();
-        label.title = note ? r.name + ' — ' + note : r.name;
-        label.innerHTML =
-          '<input type="checkbox"' + (caught[id] ? ' checked' : '') + '>' +
+        (byRarity[f[1]] = byRarity[f[1]] || []).push(f);
+      });
+      ['Mythic','Unique','Legendary','Rare','Magic','Common'].forEach(function (rar) {
+        if (!byRarity[rar]) return;
+        var group = document.createElement('label');
+        group.className = 'rarity-group';
+        group.innerHTML =
+          '<input type="checkbox">' +
           '<span class="box"></span>' +
-          '<span class="name">' + f[0] + '</span>' +
-          '<span class="rarity r-' + f[1].toLowerCase() + '">' + f[1] + '</span>';
-        var box = label.querySelector('input');
-        box.addEventListener('change', function () {
-          if (box.checked) caught[id] = true; else delete caught[id];
+          '<span class="rarity-name rarity r-' + rar.toLowerCase() + '">' + rar + '</span>' +
+          '<span class="rarity-count"></span>';
+        var groupBox = group.querySelector('input');
+        groupBox.addEventListener('change', function () {
+          byRarity[rar].forEach(function (f) {
+            var id = r.id + ':' + f[0].toLowerCase().replace(/[^a-z0-9]+/g, '-');
+            if (groupBox.checked) caught[id] = true; else delete caught[id];
+          });
           save(); refresh();
         });
-        list.appendChild(label);
+        list.appendChild(group);
+
+        var grid = document.createElement('div');
+        grid.style.display = 'grid';
+        grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+        byRarity[rar].forEach(function (f) {
+          var id = r.id + ':' + f[0].toLowerCase().replace(/[^a-z0-9]+/g, '-');
+          var note = f[2];
+          var label = document.createElement('label');
+          label.className = 'fish';
+          label.dataset.name = f[0].toLowerCase();
+          label.title = note ? r.name + ' — ' + note : r.name;
+          label.innerHTML =
+            '<input type="checkbox"' + (caught[id] ? ' checked' : '') + '>' +
+            '<span class="box"></span>' +
+            '<span class="name">' + f[0] + '</span>';
+          var box = label.querySelector('input');
+          box.addEventListener('change', function () {
+            if (box.checked) caught[id] = true; else delete caught[id];
+            save(); refresh();
+          });
+          grid.appendChild(label);
+        });
+        list.appendChild(grid);
       });
       sec.appendChild(list);
       regionsEl.appendChild(sec);
@@ -318,6 +362,13 @@
         el.classList.toggle('caught', isCaught);
         el.style.display = (opts.hideCaught && isCaught) ? 'none' : '';
         if (isCaught) n++;
+      });
+      sec.querySelectorAll('.rarity-group').forEach(function (g) {
+        var grid = g.nextElementSibling;
+        var items = grid.querySelectorAll('.fish');
+        var gn = grid.querySelectorAll('.fish input:checked').length;
+        g.querySelector('input').checked = gn === items.length && items.length > 0;
+        g.querySelector('.rarity-count').textContent = gn + ' / ' + items.length;
       });
       var done = n === r.fish.length;
       if (done) regionsDone++;
@@ -359,6 +410,52 @@
     var anyOpen = sectionEls.some(function (s) { return !s.classList.contains('collapsed'); });
     sectionEls.forEach(function (s) { s.classList.toggle('collapsed', anyOpen); });
     this.textContent = anyOpen ? 'Expand All' : 'Collapse All';
+  });
+
+  document.getElementById('btn-export').addEventListener('click', function () {
+    var payload = {
+      app: 'd4-fishing-tracker',
+      version: 1,
+      exported: new Date().toISOString(),
+      caught: Object.keys(caught)
+    };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'fishing-tracker-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('btn-import').addEventListener('click', function () {
+    document.getElementById('import-file').click();
+  });
+
+  document.getElementById('import-file').addEventListener('change', function () {
+    var file = this.files[0];
+    this.value = '';
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var data;
+      try { data = JSON.parse(reader.result); } catch (e) {
+        alert('Not a valid backup file.');
+        return;
+      }
+      var ids = (data && Array.isArray(data.caught)) ? data.caught : null;
+      if (!ids) {
+        alert('Not a valid backup file.');
+        return;
+      }
+      caught = {};
+      ids.forEach(function (id) { caught[id] = true; });
+      save();
+      location.reload();
+    };
+    reader.readAsText(file);
   });
 
   document.getElementById('btn-reset').addEventListener('click', function () {
