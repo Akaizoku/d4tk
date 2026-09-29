@@ -146,12 +146,21 @@
     background: var(--panel-2);
     border-top: 1px solid var(--border);
     border-bottom: 1px solid rgba(58,46,38,.4);
-    cursor: pointer; user-select: none;
     font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
+    user-select: none;
   }
-  .rarity-group:hover .rarity-name { filter: brightness(1.25); }
+  .gcheck { display: inline-flex; align-items: center; cursor: pointer; }
+  .gcheck input { display: none; }
+  .collapse-arrow {
+    cursor: pointer; color: var(--blood-hi);
+    font-size: .7rem; width: 1em; text-align: center;
+    transition: transform .2s;
+  }
+  .rarity-group.collapsed .collapse-arrow { transform: rotate(-90deg); }
+  .rarity-group.collapsed + .fish-grid { display: none; }
+  .rarity-group .rarity-name { cursor: pointer; font-size: inherit; }
+  .rarity-group .rarity-name:hover { filter: brightness(1.25); }
   .rarity-group .box { width: 13px; height: 13px; }
-  .rarity-group .rarity-name { font-size: inherit; }
   .rarity-group .rarity-count { margin-left: auto; color: var(--text-dim); letter-spacing: .05em; font-size: .68rem; }
 
   .fish {
@@ -167,8 +176,8 @@
     border: 1px solid var(--border-hi); background: var(--bg);
     position: relative; transition: all .15s;
   }
-  .fish input:checked + .box { background: var(--blood); border-color: var(--blood-hi); }
-  .fish input:checked + .box::after {
+  input:checked + .box { background: var(--blood); border-color: var(--blood-hi); }
+  input:checked + .box::after {
     content: '✕'; position: absolute; inset: 0;
     display: flex; align-items: center; justify-content: center;
     color: #f3e6c8; font-size: .7rem; line-height: 1;
@@ -289,13 +298,26 @@
       var head = document.createElement('div');
       head.className = 'head';
       head.innerHTML =
+        '<span class="gcheck"><input type="checkbox">' +
+        '<span class="box"></span></span>' +
         '<span class="chevron">▼</span>' +
         '<span class="region-name">' + r.name +
         (r.tag ? '<span class="tag">' + r.tag + '</span>' : '') +
         '</span>' +
         '<span class="mini-bar"><div></div></span>' +
         '<span class="region-count"><b>0</b> / ' + r.fish.length + '</span>';
-      head.addEventListener('click', function () { sec.classList.toggle('collapsed'); });
+      var headBox = head.querySelector('.gcheck input');
+      headBox.addEventListener('change', function () {
+        sec.querySelectorAll('.fish').forEach(function (el) {
+          var id = el.dataset.id;
+          if (headBox.checked) caught[id] = true; else delete caught[id];
+        });
+        save(); refresh();
+      });
+      head.addEventListener('click', function (e) {
+        if (head.querySelector('.gcheck').contains(e.target)) return;
+        sec.classList.toggle('collapsed');
+      });
       sec.appendChild(head);
 
       var list = document.createElement('div');
@@ -304,16 +326,17 @@
       r.fish.forEach(function (f) {
         (byRarity[f[1]] = byRarity[f[1]] || []).push(f);
       });
-      ['Mythic','Unique','Legendary','Rare','Magic','Common'].forEach(function (rar) {
+      ['Common','Magic','Rare','Legendary','Unique','Mythic'].forEach(function (rar) {
         if (!byRarity[rar]) return;
-        var group = document.createElement('label');
+        var group = document.createElement('div');
         group.className = 'rarity-group';
         group.innerHTML =
-          '<input type="checkbox">' +
-          '<span class="box"></span>' +
+          '<span class="collapse-arrow">▼</span>' +
+          '<span class="gcheck"><input type="checkbox">' +
+          '<span class="box"></span></span>' +
           '<span class="rarity-name rarity r-' + rar.toLowerCase() + '">' + rar + '</span>' +
           '<span class="rarity-count"></span>';
-        var groupBox = group.querySelector('input');
+        var groupBox = group.querySelector('.gcheck input');
         groupBox.addEventListener('change', function () {
           byRarity[rar].forEach(function (f) {
             var id = r.id + ':' + f[0].toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -321,9 +344,19 @@
           });
           save(); refresh();
         });
+        var arrow = group.querySelector('.collapse-arrow');
+        arrow.addEventListener('click', function (e) {
+          e.stopPropagation();
+          group.classList.toggle('collapsed');
+        });
+        group.querySelector('.rarity-name').addEventListener('click', function (e) {
+          e.stopPropagation();
+          group.classList.toggle('collapsed');
+        });
         list.appendChild(group);
 
         var grid = document.createElement('div');
+        grid.className = 'fish-grid';
         grid.style.display = 'grid';
         grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
         byRarity[rar].forEach(function (f) {
@@ -331,6 +364,7 @@
           var note = f[2];
           var label = document.createElement('label');
           label.className = 'fish';
+          label.dataset.id = id;
           label.dataset.name = f[0].toLowerCase();
           label.title = note ? r.name + ' — ' + note : r.name;
           label.innerHTML =
@@ -367,9 +401,12 @@
         var grid = g.nextElementSibling;
         var items = grid.querySelectorAll('.fish');
         var gn = grid.querySelectorAll('.fish input:checked').length;
-        g.querySelector('input').checked = gn === items.length && items.length > 0;
+        g.querySelector('.gcheck input').checked = gn === items.length && items.length > 0;
         g.querySelector('.rarity-count').textContent = gn + ' / ' + items.length;
       });
+      var headBox = sec.querySelector('.head .gcheck input');
+      var fishBoxes = sec.querySelectorAll('.fish input');
+      headBox.checked = n === r.fish.length && fishBoxes.length > 0;
       var done = n === r.fish.length;
       if (done) regionsDone++;
       sec.querySelector('.region-count b').textContent = n;
