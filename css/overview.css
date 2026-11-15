@@ -1,0 +1,59 @@
+.tracker-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.tracker-card {
+  display: block;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 1.2rem 1.3rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.tracker-card:hover {
+  border-color: var(--blood-hi);
+  box-shadow: 0 0 18px rgba(138,28,28,.25);
+  transform: translateY(-2px);
+}
+
+.card-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: .8rem;
+  margin-bottom: .7rem;
+}
+.card-name {
+  font-size: 1.25rem; letter-spacing: .12em; text-transform: uppercase;
+  color: #ddd0b8;
+  transition: color .2s;
+}
+.tracker-card:hover .card-name { color: #e8dcc3; }
+.card-pct {
+  font-size: 1.5rem; color: var(--gold); flex: none;
+  text-shadow: 0 0 12px rgba(201,163,74,.35);
+}
+
+.card-bar {
+  height: 6px; background: var(--bg);
+  border: 1px solid var(--border);
+  margin-bottom: .7rem;
+}
+.card-bar > div {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--blood), var(--gold));
+  transition: width .35s ease;
+}
+
+.card-meta {
+  font-size: .78rem; color: var(--text-dim); letter-spacing: .04em;
+  margin-bottom: .5rem;
+}
+
+
+.card-desc {
+  font-size: .8rem; font-style: italic; color: var(--text-dim);
+  line-height: 1.5;
+}

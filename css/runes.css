@@ -1,0 +1,116 @@
+/* Runes & Runewords page — rune ladder table (sortable, checkboxes) + runewords table */
+
+.rune-sec {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  margin-bottom: 1.4rem;
+}
+.rune-head {
+  display: flex; align-items: center; gap: 1rem;
+  padding: .9rem 1.1rem;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none;
+}
+.collapse-arrow { display: inline-block; color: var(--text-dim); font-size: .7rem; transition: transform .15s; }
+.rune-sec.collapsed .collapse-arrow { transform: rotate(-90deg); }
+.rune-sec.collapsed .rune-body { display: none; }
+.rune-sec.collapsed .rune-head { border-bottom: none; }
+.rune-name {
+  flex: 1;
+  font-size: 1.1rem; letter-spacing: .12em; text-transform: uppercase;
+  color: #ddd0b8;
+}
+.rune-count { margin-left: auto; color: var(--text-dim); letter-spacing: .08em; font-size: .72rem; text-transform: uppercase; }
+.rune-body { padding: .6rem 1.1rem 1rem; }
+
+.rune-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: .2rem;
+  table-layout: fixed;
+}
+.rune-table th {
+  position: relative;
+  text-align: left;
+  font-size: .62rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--text-dim);
+  padding: .35rem .6rem;
+  border-bottom: 1px solid var(--border-hi);
+  word-break: normal;
+  hyphens: none;
+}
+.rune-table th.c-rune { width: 11%; }
+.rune-table th.c-type { width: 10%; }
+.rune-table th.c-season { width: 10%; }
+.rune-table th.c-rarity { width: 10%; }
+.rune-table th.c-upgrade { width: 21%; }
+.col-resize {
+  position: absolute; top: 0; right: -4px;
+  width: 8px; height: 100%;
+  cursor: col-resize; z-index: 1;
+  touch-action: none;
+}
+.col-resize:hover { background: var(--border-hi); }
+.rune-table th.sortable { cursor: pointer; user-select: none; }
+.rune-table th.sortable:hover { color: #ddd0b8; }
+.rune-table th .arrow { display: inline-block; color: var(--blood-hi); margin-left: .15rem; font-size: .6rem; }
+.rune-table td {
+  padding: .45rem .6rem;
+  border-bottom: 1px solid rgba(58,46,38,.4);
+  font-size: .8rem; color: var(--text-dim);
+  vertical-align: baseline;
+}
+.rune-row:last-child td { border-bottom: none; }
+.rune-row .c-rune { white-space: nowrap; }
+.rune-row .name { font-size: .9rem; color: #ffa800; letter-spacing: .06em; }
+.rune-row .type, .rune-row .season {
+  font-size: .62rem; letter-spacing: .12em; text-transform: uppercase;
+  white-space: nowrap;
+}
+/* in-game rune colours: Ritual orange, Invocation pink/purple; seasonal green, eternal parchment */
+.rune-row .type.ritual { color: #f0a030; }
+.rune-row .type.invocation { color: #c86ee0; }
+.rune-row .season.seasonal { color: #58b368; }
+.rune-row .season.eternal { color: #e8dcc3; }
+.rune-row .c-effect { white-space: normal; }
+.rune-row .c-upgrade { white-space: normal; overflow-wrap: break-word; }
+.rune-row .c-upgrade .up-gem { display: block; }
+.rune-row .c-upgrade .gem.gem-topaz { color: #ffcf3f; }
+.rune-row .c-upgrade .gem.gem-amethyst { color: #b678f0; }
+.rune-row .c-upgrade .gem.gem-ruby { color: #ff5a4e; }
+.rune-row .c-upgrade .gem.gem-emerald { color: #58d68d; }
+.rune-row .c-upgrade .gem.gem-diamond { color: #dfe9f5; }
+.rune-row .c-upgrade .gem.gem-sapphire { color: #4a90e2; }
+
+.rune-row .gcheck { gap: .45rem; }
+.rune-row.selected td { background: rgba(120, 40, 30, .18); }
+
+/* Runewords table */
+.rw-table th.c-name { width: 20%; }
+.rw-table th.c-bases { width: 18%; }
+.rw-table th.c-runes { width: 20%; }
+.rw-table td { word-wrap: break-word; overflow-wrap: break-word; white-space: normal; }
+.rw-table .c-name { font-size: .9rem; color: #ddd0b8; letter-spacing: .06em; white-space: nowrap; }
+.rw-table .c-bases .base { display: block; line-height: 1.45; }
+.rw-table .c-runes { color: #ffa800; letter-spacing: .03em; line-height: 1.45; }
+.rw-table .c-runes .rune { display: block; }
+.rw-table .c-affixes .bonus { display: block; line-height: 1.45; }
+.rw-table .c-affixes .bonus.power { color: var(--gold); font-style: italic; margin-top: .2rem; }
+.rw-row.craftable td { background: rgba(90, 70, 20, .28); }
+.rw-row.craftable .c-name { color: var(--gold); }
+
+.controls { display: flex; gap: .6rem; margin-bottom: 1.2rem; }
+.controls input[type="search"], .controls select {
+  padding: .55rem .9rem;
+  background: var(--panel); border: 1px solid var(--border); color: var(--text);
+  font-size: .85rem;
+}
+.controls input[type="search"] { flex: 1; min-width: 0; }
+.controls select { flex: none; max-width: 14rem; }
+.controls input[type="search"]:focus, .controls select:focus { outline: none; border-color: var(--border-hi); }
+.no-match { font-size: .8rem; color: var(--text-dim); font-style: italic; }
+
+@media (max-width: 640px) {
+  .rune-table { display: block; overflow-x: auto; }
+}

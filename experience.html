@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap">
+<title>D4TK - Experience</title>
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/experience.css">
+</head>
+<body>
+<nav class="topnav">
+  <div class="inner">
+    <a class="brand" href="index.html">D4 <span class="bl">Toolkit</span></a>
+    <span class="tool wb-timer" id="wb-timer" title="Next world boss spawn (local time)">World boss …</span>
+    <span class="spacer"></span>
+    <span class="nav-active-label">Experience</span>
+    <div class="burger" id="burger">
+      <button class="burger-btn" id="burger-btn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <div class="burger-menu" id="burger-menu">
+        <a class="tool" href="achievements.html">Achievements</a>
+        <a class="tool" href="cosmetics.html">Cosmetics</a>
+        <a class="tool" href="cow.html">Cows</a>
+        <a class="tool" href="cube.html">Cube</a>
+        <a class="tool active" href="experience.html">Experience</a>
+        <a class="tool" href="fishing.html">Fishing</a>
+        <a class="tool" href="references.html">References</a>
+        <a class="tool" href="runes.html">Runes</a>
+        <a class="tool" href="titles.html">Titles</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <header>
+    <h1>Experience <span class="bl">Tables</span></h1>
+    <p class="subtitle">XP required to reach level 70 and paragon 300 · charts, tables, and an Eternal + Season merge calculator</p>
+    <div class="divider">⚜</div>
+  </header>
+
+  <div class="summary">
+    <div class="stat">Total XP to level <b>70</b> · <span id="stat-char-total">…</span></div>
+    <div class="stat">Total XP to paragon <b>300</b> · <span id="stat-para-total">…</span></div>
+  </div>
+
+  <section data-section="calculator">
+    <div class="exp-head">
+      <span class="chevron">▼</span>
+      <span class="exp-title">Paragon <span class="exp-range">Calculator</span></span>
+      <span class="exp-note">Merge an Eternal realm level and a Season level by total XP</span>
+    </div>
+    <div class="exp-body">
+      <div class="calc">
+        <label class="calc-field">
+          <span>Eternal realm</span>
+          <input type="number" id="calc-eternal" min="0" max="300" step="1" value="0" aria-label="Eternal realm paragon level">
+        </label>
+        <span class="calc-plus">+</span>
+        <label class="calc-field">
+          <span>Season</span>
+          <input type="number" id="calc-season" min="0" max="300" step="1" value="0" aria-label="Season paragon level">
+        </label>
+        <div class="calc-result">
+          <div class="calc-final">Paragon <b id="calc-level">0</b><span class="calc-max" id="calc-max"></span></div>
+          <div class="calc-detail" id="calc-detail">0 + 0 XP — enter your two paragon levels above</div>
+          <div class="calc-bar"><div id="calc-fill"></div></div>
+          <div class="calc-detail" id="calc-total"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section data-section="character">
+    <div class="exp-head">
+      <span class="chevron">▼</span>
+      <span class="exp-title">Character levels <span class="exp-range">1 → 70</span></span>
+      <span class="exp-note">XP needed for each level-up · log scale · hover for exact values</span>
+    </div>
+    <div class="exp-body">
+      <div class="chart-wrap">
+        <svg id="chart-character" class="chart" viewBox="0 0 840 280" role="img" aria-label="XP required per character level, logarithmic scale"></svg>
+        <div class="chart-tip" id="tip-character"></div>
+        <div class="chart-legend"><span class="swatch"></span>Levels 61–70 reuse the level 60 XP value (flat estimate — see footer)</div>
+      </div>
+      <div class="table-scroll">
+        <table class="xp-table" id="table-character">
+          <thead><tr><th>Level</th><th>XP to next level</th><th>Total XP to reach level</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section data-section="paragon">
+    <div class="exp-head">
+      <span class="chevron">▼</span>
+      <span class="exp-title">Paragon levels <span class="exp-range">1 → 300</span></span>
+      <span class="exp-note">Cumulative XP to reach each paragon level · hover for exact values</span>
+    </div>
+    <div class="exp-body">
+      <div class="chart-wrap">
+        <svg id="chart-paragon" class="chart" viewBox="0 0 840 280" role="img" aria-label="Cumulative XP to reach each paragon level"></svg>
+        <div class="chart-tip" id="tip-paragon"></div>
+      </div>
+      <div class="table-scroll">
+        <table class="xp-table" id="table-paragon">
+          <thead><tr><th>Paragon level</th><th>XP for that level</th><th>Total XP to reach level</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Unofficial fan-made tool for Diablo IV — not affiliated with Blizzard Entertainment · Season 15 (patch 3.2.4).<br>
+    Sources and further details: <a class="ref" href="references.html">References</a><br>
+    <a class="gh" href="https://github.com/Akaizoku/d4tk" target="_blank" rel="noopener" aria-label="D4TK on GitHub" title="D4TK on GitHub"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+  </footer>
+</div>
+
+<script src="js/data/experience-data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/worldboss.js"></script>
+<script src="js/experience.js"></script>
+</body>
+</html>

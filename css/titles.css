@@ -1,0 +1,82 @@
+section.collapsed .item-list { display: none; }
+
+.title-list { display: block; }
+
+/* One row per title, same pattern as the other trackers:
+   checkbox | prefix | suffix | description | link icon on the far right. */
+.title-row {
+  display: grid;
+  /* Prefix/suffix columns are fixed to the widest prefix/suffix across all
+     tabs (set from titles.js as --title-prefix-w / --title-suffix-w), so every
+     row lines up and the description column gets all remaining width. */
+  grid-template-columns: auto var(--title-prefix-w, max-content) var(--title-suffix-w, max-content) minmax(0, 1fr);
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem .8rem;
+  border-bottom: 1px solid rgba(58,46,38,.4);
+  cursor: pointer;
+  transition: background .15s;
+}
+.title-row:last-child { border-bottom: none; }
+.title-row:hover { background: rgba(138,28,28,.08); }
+.title-row input { display: none; }
+
+.title-row .t-desc {
+  min-width: 0;
+  font-size: .78rem; color: var(--text-dim); font-style: italic;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.title-row .t-desc .info { font-size: inherit; border-bottom: none; }
+
+.title-row.collected .t-desc,
+.title-row.collected .t-name {
+  color: var(--text-dim);
+  text-decoration: line-through;
+  text-decoration-color: currentColor;
+}
+.title-row.collected .info { text-decoration: line-through; }
+
+.title-row .title-part {
+  display: flex; align-items: center; gap: .5rem;
+  min-width: 0;
+  font-size: .8rem;
+}
+.title-row .title-part .t-name {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.type-badge {
+  font-size: .55rem; letter-spacing: .1em; text-transform: uppercase;
+  padding: .1rem .25rem; flex: none;
+  font-family: Verdana, sans-serif;
+  border: 1px solid var(--border-hi); color: var(--text-dim);
+  line-height: 1;
+}
+.type-badge.prefix { color: var(--blood-hi); border-color: var(--blood); }
+.type-badge.suffix { color: var(--gold); border-color: var(--gold); }
+
+@media (max-width: 640px) {
+  .title-row { grid-template-columns: auto var(--title-prefix-w, max-content) var(--title-suffix-w, max-content) minmax(0, 1fr); }
+  .title-row { padding-left: .4rem; padding-right: .4rem; }
+}
+
+/* Tab styles (.tabs, .tab-button, .tab-content) live in theme.css so the
+   Achievements page can reuse them. */
+
+.empty {
+  padding: 1.5rem; text-align: center;
+  color: var(--text-dim); font-style: italic; font-size: .85rem;
+}
+
+/* Sort controls in the titles list-view header (titles page only). */
+#list .list-note { display: flex; align-items: center; flex-wrap: wrap; gap: .45rem; }
+#list .list-note select,
+#list .list-note button {
+  background: var(--panel); color: var(--text);
+  border: 1px solid var(--border); padding: .1rem .45rem;
+  font-family: inherit; font-size: .75rem; font-style: normal;
+  letter-spacing: .05em; cursor: pointer;
+}
+#list .list-note select:hover,
+#list .list-note button:hover { border-color: var(--blood-hi); color: #e8dcc3; }
+

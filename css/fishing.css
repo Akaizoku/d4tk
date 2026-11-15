@@ -1,0 +1,29 @@
+section.collapsed .item-list { display: none; }
+
+.rarity-group {
+  cursor: pointer;
+  display: flex; align-items: center; gap: .6rem;
+  padding: .4rem .8rem .35rem;
+  background: var(--panel-2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid rgba(58,46,38,.4);
+  font-size: .85rem; letter-spacing: .16em; text-transform: uppercase;
+  user-select: none;
+}
+.collapse-arrow {
+  cursor: pointer; color: var(--blood-hi);
+  font-size: .7rem; width: 1em; text-align: center;
+  transition: transform .2s;
+}
+.rarity-group.collapsed .collapse-arrow { transform: rotate(-90deg); }
+.rarity-group.collapsed + .fish-grid { display: none; }
+/* .fish-grid layout (3 columns, last-row expansion) comes from .check-grid in
+   theme.css — the grid carries both classes. layoutCheckGrid() re-runs on
+   every refresh/search so the span tracks only visible items. */
+#regions.hide-caught .rarity-group.collapsed + .fish-grid { display: none; }
+.rarity-group .rarity-name { cursor: pointer; font-size: inherit; }
+.rarity-group .rarity-name:hover { filter: brightness(1.25); }
+.rarity-group .box { width: 13px; height: 13px; }
+.rarity-group .rarity-count { margin-left: auto; color: var(--text-dim); letter-spacing: .05em; font-size: .68rem; }
+
+.item.caught .name { color: var(--text-dim); text-decoration: line-through; text-decoration-color: currentColor; }

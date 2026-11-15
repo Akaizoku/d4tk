@@ -1,0 +1,164 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap">
+<title>D4TK - Cosmetic Tracker</title>
+<link rel="stylesheet" href="css/theme.css">
+</head>
+<body>
+<nav class="topnav">
+  <div class="inner">
+    <a class="brand" href="index.html">D4 <span class="bl">Toolkit</span></a>
+    <span class="tool wb-timer" id="wb-timer" title="Next world boss spawn (local time)">World boss …</span>
+    <span class="spacer"></span>
+    <span class="nav-active-label">Cosmetics</span>
+    <div class="burger" id="burger">
+      <button class="burger-btn" id="burger-btn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <div class="burger-menu" id="burger-menu">
+        <a class="tool" href="achievements.html">Achievements</a>
+        <a class="tool active" href="cosmetics.html">Cosmetics</a>
+        <a class="tool" href="cow.html">Cows</a>
+        <a class="tool" href="cube.html">Cube</a>
+        <a class="tool" href="experience.html">Experience</a>
+        <a class="tool" href="fishing.html">Fishing</a>
+        <a class="tool" href="references.html">References</a>
+        <a class="tool" href="runes.html">Runes</a>
+        <a class="tool" href="titles.html">Titles</a>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="wrap">
+  <header>
+    <h1>Cosmetic <span class="bl">Tracker</span></h1>
+    <p class="subtitle">All base-game wardrobe transmogrifications, seasonal rewards, and premium items</p>
+    <div class="divider">⚜</div>
+  </header>
+
+  <div class="summary">
+    <div class="stat">Collected <b id="stat-primary">0</b> / <span id="stat-total">0</span></div>
+    <div class="stat">Seasonal <b id="stat-season">0</b></div>
+    <div class="stat">Premium <b id="stat-store">0</b></div>
+  </div>
+  <div class="global-bar"><div id="global-fill"></div></div>
+
+  <div class="controls">
+    <input type="search" id="search" aria-label="Search cosmetics">
+    <button id="btn-hide-collected">Hide Collected</button>
+    <button id="btn-list">List</button>
+    <button id="btn-expand">Collapse All</button>
+    <button id="btn-reset">Reset</button>
+    <button id="btn-export">Export</button>
+    <button id="btn-import">Import</button>
+    <input type="file" id="import-file" accept="application/json,.json" style="display:none">
+  </div>
+
+  <div class="tabs">
+    <button id="tab-game" class="tab-button active" onclick="switchTab('game')">Game</button>
+    <button id="tab-season" class="tab-button" onclick="switchTab('season')">Season</button>
+    <button id="tab-shop" class="tab-button" onclick="switchTab('shop')">Shop</button>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      ['game', 'season', 'shop'].forEach(function (t) {
+        document.getElementById(t).classList.toggle('active', t === tab);
+        document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+      });
+    }
+  </script>
+
+  <main id="categories" class="cosmetics-list" style="display:none"></main>
+  <main id="game" class="tab-content cosmetics-list active"></main>
+  <main id="season" class="tab-content cosmetics-list"></main>
+  <main id="shop" class="tab-content cosmetics-list"></main>
+  <main id="list" class="cosmetics-list"></main>
+
+  <footer>
+    Unofficial fan-made tool for Diablo IV — not affiliated with Blizzard Entertainment · Season 15 (patch 3.2.4).<br>
+    Sources and further details: <a class="ref" href="references.html">References</a><br>
+    <a class="gh" href="https://github.com/Akaizoku/d4tk" target="_blank" rel="noopener" aria-label="D4TK on GitHub" title="D4TK on GitHub"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+  </footer>
+</div>
+
+<script src="js/tracker.js"></script>
+<script src="js/data/cosmetics-data.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/worldboss.js"></script>
+<script>
+// One-time migrations: store key renamed to d4tk-cosmetics, and Season 15 items
+// moved from their old per-source categories into the single "Season 15" section —
+// remap saved progress to the new item ids.
+D4TK.renameStoreKey('d4-cosmetics-ledger-v1', 'd4tk-cosmetics');
+D4TK.migrateStoreKeys('d4tk-cosmetics', {
+  'free-battle-pass-reliquary-': 'season-15-',
+  'armor-reliquary-d2-tribute-sets-': 'season-15-',
+  'weapons-reliquary-': 'season-15-',
+  'beasts-reliquary-': 'season-15-',
+  'deluxe-battle-pass-exclusives-': 'season-15-',
+  'season-rank-rewards-': 'season-15-',
+  'bovine-armor-set-': 'season-15-',
+  'moophisto-cow-rewards-': 'season-15-',
+  'secret-titles-cosmetics-': 'season-15-',
+  'echo-of-tristram-rewards-': 'season-15-',
+  'twitch-drops-': 'season-15-',
+  'dark-citadel-khazra-sets-': 'dark-citadel-mounts-trophies-'
+});
+// One-time: the "Winged Redeemer" Chest/Helm names lost their literal quotes,
+// which changes their slug-based ids — remap saved progress to the new ids.
+D4TK.migrateStoreIds('d4tk-cosmetics', {
+  'season-14--winged-redeemer-chest': 'season-14-winged-redeemer-chest',
+  'season-14--winged-redeemer-helm': 'season-14-winged-redeemer-helm'
+});
+D4TK.create({
+  storeKey: 'd4tk-cosmetics',
+  data: D4TK_DATA.cosmetics,
+  containerId: 'categories',
+  hasSubcategories: true,
+  collapsibleSubcategories: true,
+  listView: true,
+  listItemType: 'cosmetics',
+  itemTags: true,
+  classColumn: true,
+  // The summary "Collected" counter covers the base game only. Seasonal and
+  // Shop categories are premium/rotating (no fixed total) and get their own
+  // count-only counters via statExtras; the Mounts and Pets sections aggregate
+  // items already tracked elsewhere, so all of them are excluded from the
+  // main stats and the global progress bar.
+  statExclude: function (cat) { return cat.group === 'Season' || cat.group === 'Shop' || cat.name === 'Mounts' || cat.name === 'Pets'; },
+  statExtras: [
+    { id: 'stat-season', match: function (cat) { return cat.group === 'Season'; } },
+    { id: 'stat-store', match: function (cat) { return cat.group === 'Shop'; } }
+  ],
+  exportAppName: 'd4tk-cosmetics',
+  exportFilePrefix: 'cosmetics-tracker',
+  resetConfirm: 'Reset all cosmetic progress? All collected items will be lost.'
+});
+
+// Split the built sections into the Game / Season / Shop tabs, following each
+// section's data group. The group-header dividers are dropped — the tabs
+// replace them. Element references inside D4TK.create() stay valid after
+// reparenting, so search, collapse, and the summary counters keep working.
+(function () {
+  var container = document.getElementById('categories');
+  var mains = {
+    game: document.getElementById('game'),
+    season: document.getElementById('season'),
+    shop: document.getElementById('shop')
+  };
+  var currentGroup = 'Game';
+  Array.prototype.slice.call(container.children).forEach(function (el) {
+    if (el.classList.contains('group-header')) { currentGroup = el.textContent.trim(); return; }
+    if (el.tagName !== 'SECTION') return;
+    var tab = currentGroup === 'Season' ? 'season' : currentGroup === 'Shop' ? 'shop' : 'game';
+    mains[tab].appendChild(el);
+  });
+})();
+</script>
+</body>
+</html>

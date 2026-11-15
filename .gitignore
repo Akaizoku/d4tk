@@ -1,0 +1,12 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# Backups and local test files (see CONTRIBUTING.md — never commit these)
+*.bak
+*.tmp
+*.swp

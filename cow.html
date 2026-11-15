@@ -1,349 +1,72 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cow Kill Tracker — Diablo IV</title>
-<style>
-  :root {
-    --bg: #0c0a09;
-    --panel: #141110;
-    --panel-2: #1a1614;
-    --border: #3a2e26;
-    --border-hi: #6b4f33;
-    --blood: #8a1c1c;
-    --blood-hi: #c1352c;
-    --text: #c9bba6;
-    --text-dim: #7d7160;
-    --gold: #c9a34a;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background:
-      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(138,28,28,.22), transparent),
-      var(--bg);
-    color: var(--text);
-    font-family: Georgia, 'Times New Roman', serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  .wrap { max-width: 880px; margin: 0 auto; width: 100%; }
-
-  .topnav {
-    background: linear-gradient(180deg, var(--panel-2), var(--panel));
-    border-bottom: 1px solid var(--border-hi);
-    box-shadow: 0 2px 14px rgba(138,28,28,.25);
-    margin-bottom: 2.2rem;
-  }
-  .topnav .inner {
-    max-width: 880px; margin: 0 auto;
-    display: flex; align-items: center; flex-wrap: wrap;
-    padding: 0 1rem;
-  }
-  .topnav .brand {
-    color: #e8dcc3; letter-spacing: .18em; text-transform: uppercase;
-    font-size: .8rem; padding: .7rem 1.2rem .7rem 0;
-    text-shadow: 0 0 10px rgba(193,53,44,.5);
-  }
-  .topnav .brand .bl { color: var(--blood-hi); }
-  .topnav a.tool {
-    color: var(--text-dim); text-decoration: none;
-    letter-spacing: .12em; text-transform: uppercase;
-    font-size: .72rem;
-    padding: .7rem 1.1rem;
-    border-left: 1px solid var(--border);
-    transition: color .2s, background .2s;
-  }
-  .topnav a.tool:hover { color: #e8dcc3; background: rgba(138,28,28,.12); }
-  .topnav a.tool.active {
-    color: var(--gold);
-    background: rgba(138,28,28,.18);
-    box-shadow: inset 0 -2px 0 var(--blood-hi);
-  }
-  .topnav .spacer { flex: 1; }
-
-  main {
-    flex: 1; display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    padding: 0 1rem 4rem;
-  }
-  .counter-container {
-    text-align: center;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 24px rgba(0,0,0,.6), 0 0 40px rgba(138,28,28,.12);
-    padding: 2rem;
-    width: 340px;
-  }
-  .page-title {
-    text-align: center; letter-spacing: .14em; text-transform: uppercase;
-    color: #e8dcc3; font-weight: normal;
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    text-shadow: 0 0 18px rgba(193,53,44,.45), 0 2px 2px #000;
-  }
-  .page-title .bl { color: var(--blood-hi); }
-  .page-subtitle {
-    margin-top: .4rem; color: var(--text-dim);
-    font-style: italic; font-size: .95rem; letter-spacing: .04em;
-  }
-  .divider {
-    display: flex; align-items: center; gap: .8rem;
-    margin: 1.2rem auto 1.6rem; max-width: 520px; color: var(--blood-hi);
-  }
-  .divider::before, .divider::after {
-    content: ''; flex: 1; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--blood) 30%, var(--border-hi) 50%, var(--blood) 70%, transparent);
-  }
-  .hint {
-    color: var(--text-dim); font-size: .72rem; font-style: italic;
-    margin-top: 1rem; line-height: 1.6;
-  }
-
-  .top-row {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 1rem;
-  }
-  .timer {
-    font-size: 1.2rem; color: var(--text-dim);
-    letter-spacing: .08em;
-  }
-  .counter-value {
-    font-size: 3.4rem; margin: 1rem 0;
-    color: var(--gold);
-    text-shadow: 0 0 16px rgba(201,163,74,.35), 0 2px 2px #000;
-  }
-  .button-row {
-    display: flex; justify-content: center; margin-top: 1rem; gap: .5rem;
-  }
-  .bottom-row {
-    display: flex; justify-content: space-between; margin-top: 1rem;
-  }
-  button {
-    font-size: 1rem; padding: .25rem; cursor: pointer;
-    background: var(--panel-2); color: var(--text);
-    border: 1px solid var(--border-hi);
-    width: 40px; height: 40px;
-    display: flex; justify-content: center; align-items: center;
-    transition: background .15s, border-color .15s, color .15s;
-    font-family: inherit;
-  }
-  button:hover {
-    background: var(--blood); border-color: var(--blood-hi); color: #f3e6c8;
-  }
-  .undo-redo-button { font-size: .85rem; color: var(--text-dim); }
-  .undo-redo-button:hover { color: #f3e6c8; }
-
-  footer {
-    text-align: center; margin-top: auto;
-    padding: 1.2rem; color: var(--text-dim);
-    font-size: .78rem; font-style: italic;
-    border-top: 1px solid var(--border);
-  }
-</style>
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap">
+<title>D4TK - Cow Tracker</title>
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/cow.css">
 </head>
 <body tabindex="0">
-<div class="wrap">
-  <nav class="topnav">
-    <div class="inner">
-      <span class="brand">D4 <span class="bl">Toolkit</span></span>
-      <span class="spacer"></span>
-      <a class="tool" href="index.html">Fishing</a>
-      <a class="tool active" href="cow.html">Cows</a>
+<nav class="topnav">
+  <div class="inner">
+    <a class="brand" href="index.html">D4 <span class="bl">Toolkit</span></a>
+    <span class="tool wb-timer" id="wb-timer" title="Next world boss spawn (local time)">World boss …</span>
+    <span class="spacer"></span>
+    <span class="nav-active-label">Cows</span>
+    <div class="burger" id="burger">
+      <button class="burger-btn" id="burger-btn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <div class="burger-menu" id="burger-menu">
+        <a class="tool" href="achievements.html">Achievements</a>
+        <a class="tool" href="cosmetics.html">Cosmetics</a>
+        <a class="tool active" href="cow.html">Cows</a>
+        <a class="tool" href="cube.html">Cube</a>
+        <a class="tool" href="experience.html">Experience</a>
+        <a class="tool" href="fishing.html">Fishing</a>
+        <a class="tool" href="references.html">References</a>
+        <a class="tool" href="runes.html">Runes</a>
+        <a class="tool" href="titles.html">Titles</a>
+      </div>
     </div>
-  </nav>
+  </div>
+</nav>
+<div class="wrap">
+  <header>
+    <h1>Cow <span class="bl">Tracker</span></h1>
+    <p class="subtitle">Count the bovine slaughter across Sanctuary</p>
+    <div class="divider">⚜</div>
+  </header>
 </div>
 <main>
-  <div>
-    <div class="page-head">
-      <h1 class="page-title">Cow <span class="bl">Tracker</span></h1>
-      <p class="page-subtitle">Count the bovine slaughter across Sanctuary</p>
-      <div class="divider">⚜</div>
+  <div class="counter-container">
+    <div class="top-row">
+      <button class="cow-btn" id="timerButton">▶</button>
+      <div class="timer" id="timer">00:00:00</div>
+      <button class="cow-btn" id="resetButton">↻</button>
     </div>
-    <div class="counter-container">
-      <div class="top-row">
-        <button id="timerButton">▶</button>
-        <div class="timer" id="timer">00:00:00</div>
-        <button id="resetButton">↻</button>
-      </div>
-      <div class="counter-value" id="counter">0</div>
-      <div class="button-row">
-        <button id="decButton">−</button>
-        <button id="incButton">+</button>
-      </div>
-      <div class="bottom-row">
-        <button class="undo-redo-button" id="undoButton">↩</button>
-        <button class="undo-redo-button" id="redoButton">↪</button>
-      </div>
-      <p class="hint">Press 1–9 to add kills · Ctrl+Z undo · Ctrl+Y redo<br>Timer starts on your first kill.</p>
+    <div class="counter-value" id="counter">0</div>
+    <div class="button-row">
+      <button class="cow-btn" id="decButton">−</button>
+      <button class="cow-btn" id="incButton">+</button>
+    </div>
+    <div class="bottom-row">
+      <button class="cow-btn undo-redo-button" id="undoButton">↩</button>
+      <button class="cow-btn undo-redo-button" id="redoButton">↪</button>
     </div>
   </div>
 </main>
-<footer>Unofficial fan-made tool for Diablo IV · progress is saved in your browser.</footer>
+  <footer>
+    Unofficial fan-made tool for Diablo IV — not affiliated with Blizzard Entertainment · Season 15 (patch 3.2.4).<br>
+    Sources and further details: <a class="ref" href="references.html">References</a><br>
+    <a class="gh" href="https://github.com/Akaizoku/d4tk" target="_blank" rel="noopener" aria-label="D4TK on GitHub" title="D4TK on GitHub"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
+  </footer>
 
-<script>
-(function () {
-  'use strict';
-  var LS = 'd4-cow-tracker-v1';
-  var state = {
-    count: 0, elapsedTime: 0, hasStarted: false,
-    history: [], historyIndex: -1
-  };
-  try {
-    var saved = JSON.parse(localStorage.getItem(LS));
-    if (saved) {
-      state.count = saved.count || 0;
-      state.elapsedTime = saved.elapsedTime || 0;
-      state.hasStarted = !!saved.hasStarted;
-      state.history = saved.history || [];
-      state.historyIndex = typeof saved.historyIndex === 'number' ? saved.historyIndex : -1;
-    }
-  } catch (e) {}
-
-  var timerInterval = null, startTime = 0, isTimerRunning = false;
-  var counterElement = document.getElementById('counter');
-  var timerElement = document.getElementById('timer');
-  var timerButton = document.getElementById('timerButton');
-
-  function save() {
-    try { localStorage.setItem(LS, JSON.stringify(state)); } catch (e) {}
-  }
-
-  function updateCounter() {
-    counterElement.textContent = state.count;
-    save();
-  }
-
-  function saveToHistory() {
-    if (state.historyIndex < state.history.length - 1) {
-      state.history = state.history.slice(0, state.historyIndex + 1);
-    }
-    if (state.history[state.historyIndex] === state.count) { save(); return; }
-    state.history.push(state.count);
-    state.historyIndex = state.history.length - 1;
-    save();
-  }
-
-  function ensureTimer() {
-    if (!isTimerRunning) startTimer();
-  }
-
-  function increment() {
-    ensureTimer();
-    state.count += 1;
-    updateCounter();
-    saveToHistory();
-  }
-
-  function decrement() {
-    ensureTimer();
-    state.count = Math.max(0, state.count - 1);
-    updateCounter();
-    saveToHistory();
-  }
-
-  function resetCounter() {
-    if (!confirm('Slaughter anew? The counter and timer will be reset.')) return;
-    state.count = 0;
-    updateCounter();
-    saveToHistory();
-    resetTimer();
-  }
-
-  function formatTime(ms) {
-    var date = new Date(ms);
-    var h = String(date.getUTCHours()).padStart(2, '0');
-    var m = String(date.getUTCMinutes()).padStart(2, '0');
-    var s = String(date.getUTCSeconds()).padStart(2, '0');
-    return h + ':' + m + ':' + s;
-  }
-
-  function updateTimer() {
-    if (isTimerRunning) {
-      state.elapsedTime = Date.now() - startTime;
-      timerElement.textContent = formatTime(state.elapsedTime);
-      save();
-    }
-  }
-
-  function startTimer() {
-    if (isTimerRunning) return;
-    startTime = Date.now() - state.elapsedTime;
-    timerInterval = setInterval(updateTimer, 1000);
-    isTimerRunning = true;
-    state.hasStarted = true;
-    timerButton.textContent = '⏸';
-    save();
-  }
-
-  function pauseTimer() {
-    if (!isTimerRunning) return;
-    clearInterval(timerInterval);
-    isTimerRunning = false;
-    timerButton.textContent = '▶';
-  }
-
-  function toggleTimer() {
-    if (isTimerRunning) pauseTimer(); else startTimer();
-  }
-
-  function resetTimer() {
-    pauseTimer();
-    state.elapsedTime = 0;
-    timerElement.textContent = '00:00:00';
-    state.hasStarted = false;
-    timerButton.textContent = '▶';
-    save();
-  }
-
-  function undo() {
-    if (state.historyIndex > 0) {
-      state.historyIndex--;
-      state.count = state.history[state.historyIndex];
-      updateCounter();
-    }
-  }
-
-  function redo() {
-    if (state.historyIndex < state.history.length - 1) {
-      state.historyIndex++;
-      state.count = state.history[state.historyIndex];
-      updateCounter();
-    }
-  }
-
-  document.addEventListener('keydown', function (event) {
-    var key = event.key;
-    if (!isNaN(key) && key !== ' ' && key !== '') {
-      ensureTimer();
-      var value = parseInt(key);
-      if (value >= 1 && value <= 9) {
-        state.count = Math.max(0, state.count + value);
-        updateCounter();
-        saveToHistory();
-      }
-    } else if (event.ctrlKey) {
-      if (event.key === 'z') undo();
-      else if (event.key === 'y') redo();
-    }
-  });
-
-  updateCounter();
-  timerElement.textContent = formatTime(state.elapsedTime);
-  if (state.history.length === 0) {
-    state.history.push(state.count);
-    state.historyIndex = 0;
-    save();
-  }
-  if (state.hasStarted) startTimer();
-
-  document.getElementById('incButton').addEventListener('click', increment);
-  document.getElementById('decButton').addEventListener('click', decrement);
-  document.getElementById('undoButton').addEventListener('click', undo);
-  document.getElementById('redoButton').addEventListener('click', redo);
-  timerButton.addEventListener('click', toggleTimer);
-  document.getElementById('resetButton').addEventListener('click', resetCounter);
-})();
-</script>
+<script src="js/cow.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/worldboss.js"></script>
 </body>
 </html>

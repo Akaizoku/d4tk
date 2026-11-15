@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <filter id="fireGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+  </defs>
+  <g font-family="'Exocet', Georgia, 'Times New Roman', serif" font-size="44" font-weight="bold" text-anchor="middle" stroke-linejoin="round">
+    <text x="32" y="32" dy=".35em" fill="none" stroke="#5c130a" stroke-width="10" filter="url(#fireGlow)">IV</text>
+    <text x="32" y="32" dy=".35em" fill="none" stroke="#8a1c1c" stroke-width="7">IV</text>
+    <text x="32" y="32" dy=".35em" fill="none" stroke="#c1352c" stroke-width="4.5">IV</text>
+    <text x="32" y="32" dy=".35em" fill="none" stroke="#e07b1f" stroke-width="2.5">IV</text>
+    <text x="32" y="32" dy=".35em" fill="none" stroke="#e8c33a" stroke-width="1.2">IV</text>
+    <text x="32" y="32" dy=".35em" fill="#171008">IV</text>
+  </g>
+</svg>

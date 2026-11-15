@@ -1,0 +1,532 @@
+:root {
+  --bg: #0c0a09;
+  --panel: #141110;
+  --panel-2: #1a1614;
+  --border: #3a2e26;
+  --border-hi: #6b4f33;
+  --blood: #8a1c1c;
+  --blood-hi: #c1352c;
+  --text: #c9bba6;
+  --text-dim: #7d7160;
+  --gold: #c9a34a;
+  --r-common: #a99f92;
+  --r-magic: #4a7fd6;
+  --r-rare: #e8c33a;
+  --r-legendary: #e07b1f;
+  --r-unique: #c7b377;
+  --r-mythic: #b04ad6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background:
+    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(138,28,28,.22), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 110%, rgba(60,20,10,.25), transparent),
+    var(--bg);
+  color: var(--text);
+  font-family: 'Exocet', 'Cinzel', Georgia, 'Times New Roman', serif;
+  min-height: 100vh;
+  padding: 0 0 4rem;
+}
+.wrap { max-width: calc(880px + 2rem); margin: 0 auto; padding: 0 1rem; }
+
+/* topnav */
+.topnav {
+  position: sticky; top: 0; z-index: 100;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border-bottom: 1px solid var(--border-hi);
+  box-shadow: 0 2px 14px rgba(138,28,28,.25);
+  margin-bottom: 2.2rem;
+}
+.topnav .inner {
+  max-width: 880px; margin: 0 auto;
+  display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+  padding: 0 1rem;
+  min-height: 3.6rem;
+}
+.topnav .brand {
+  color: #e8dcc3; letter-spacing: .18em; text-transform: uppercase;
+  font-size: 1.05rem; font-weight: 700; padding: .8rem 1.2rem .8rem 0;
+  text-shadow: 0 0 10px rgba(193,53,44,.5);
+  text-decoration: none;
+}
+.topnav .brand .bl { color: var(--blood-hi); }
+.topnav .spacer { flex: 1; }
+.topnav .wb-timer {
+  color: var(--text-dim); font-style: italic; font-weight: 700;
+  letter-spacing: .01em; text-transform: uppercase;
+  font-size: .85rem;
+  padding: .8rem .45rem .8rem 1.2rem;
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+  cursor: default;
+}
+.topnav .wb-timer.wb-soon { color: var(--gold); }
+.topnav .wb-timer.wb-urgent { color: var(--blood-hi); }
+.topnav .wb-sound {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-dim);
+  padding: .8rem .5rem .8rem .1rem;
+  display: inline-flex; align-items: center;
+  transition: color .2s;
+}
+.topnav .wb-sound:hover { color: #e8dcc3; }
+.topnav .wb-sound.on { color: var(--gold); }
+.topnav .wb-sound svg { display: block; }
+.topnav .nav-active-label {
+  color: var(--gold); font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  font-size: 1rem;
+  padding: .8rem .9rem .8rem 1.2rem;
+  border-left: 1px solid var(--border);
+  white-space: nowrap;
+  text-shadow: 0 0 10px rgba(201,163,74,.35);
+}
+.topnav .burger { position: relative; display: flex; align-items: center; }
+.topnav .burger-btn {
+  background: var(--panel-2); border: 1px solid var(--border-hi);
+  width: 44px; height: 36px; margin-left: .9rem; padding: 0;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  gap: 5px; cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.topnav .burger-btn span {
+  display: block; width: 20px; height: 2px;
+  background: var(--text);
+  transition: background .2s;
+}
+.topnav .burger-btn:hover { border-color: var(--blood-hi); background: rgba(138,28,28,.15); }
+.topnav .burger-btn:hover span { background: #e8dcc3; }
+.topnav .burger-menu {
+  display: none;
+  position: absolute; top: calc(100% + 4px); right: 0;
+  min-width: 200px;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--border-hi);
+  box-shadow: 0 8px 24px rgba(0,0,0,.6);
+  z-index: 200;
+}
+.topnav .burger-menu.open { display: flex; }
+.topnav .burger-menu a.tool {
+  color: var(--text-dim); text-decoration: none; font-weight: 700;
+  letter-spacing: .12em; text-transform: uppercase;
+  font-size: .95rem;
+  padding: .8rem 1.2rem;
+  border-top: 1px solid var(--border);
+  transition: color .2s, background .2s;
+}
+.topnav .burger-menu a.tool:first-child { border-top: none; }
+.topnav .burger-menu a.tool:hover { color: #e8dcc3; background: rgba(138,28,28,.12); }
+.topnav .burger-menu a.tool.active {
+  color: var(--gold);
+  background: rgba(138,28,28,.18);
+  box-shadow: inset 2px 0 0 var(--blood-hi);
+}
+
+/* header */
+header { text-align: center; margin-bottom: 2rem; }
+h1 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #e8dcc3;
+  text-shadow: 0 0 18px rgba(193,53,44,.45), 0 2px 2px #000;
+  font-weight: normal;
+}
+h1 .bl { color: var(--blood-hi); }
+.subtitle {
+  margin-top: .4rem;
+  color: var(--text-dim);
+  font-style: italic;
+  font-size: .95rem;
+  letter-spacing: .04em;
+}
+.divider {
+  display: flex; align-items: center; gap: .8rem;
+  margin: 1.2rem auto 0; max-width: 520px; color: var(--blood-hi);
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--blood) 30%, var(--border-hi) 50%, var(--blood) 70%, transparent);
+}
+
+/* Clickable gem in the divider (Diablo II chat-gem nod): cycles colour on click. */
+.gem-btn {
+  background: none; border: none; padding: 0; margin: 0;
+  cursor: pointer; line-height: 0; transition: transform .15s;
+}
+.gem-btn:hover { transform: scale(1.18); }
+.gem-btn img { display: block; width: 20px; height: 21px; image-rendering: auto; }
+
+/* summary */
+.summary {
+  display: flex; flex-wrap: wrap; gap: 1rem;
+  justify-content: center; align-items: center;
+  margin-bottom: 1.6rem;
+  font-size: .9rem;
+}
+.stat {
+  background: var(--panel); border: 1px solid var(--border);
+  padding: .5rem 1rem; letter-spacing: .06em;
+}
+.stat b { color: var(--gold); font-size: 1.05rem; }
+.stat-note { color: var(--text-dim); font-size: .72rem; font-style: italic; letter-spacing: .03em; }
+.global-bar {
+  max-width: 520px; margin: 0 auto 2rem;
+  height: 8px; background: var(--panel-2);
+  border: 1px solid var(--border); position: relative;
+}
+.global-bar > div {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--blood), var(--blood-hi), var(--gold));
+  transition: width .35s ease;
+}
+
+/* controls */
+.controls {
+  display: flex; flex-wrap: wrap; gap: .6rem;
+  justify-content: center; margin-bottom: 2rem;
+}
+.controls button, .controls input {
+  background: var(--panel); color: var(--text);
+  border: 1px solid var(--border); padding: .45rem .9rem;
+  font-family: inherit; font-size: .85rem; letter-spacing: .05em;
+  cursor: pointer; transition: border-color .2s, color .2s;
+}
+.controls button:hover { border-color: var(--blood-hi); color: #e8dcc3; }
+.controls input { cursor: text; width: 200px; }
+.controls input::placeholder { color: var(--text-dim); font-style: italic; }
+.controls input:focus { outline: none; border-color: var(--blood-hi); }
+
+/* search clear (×) button — red instead of the default blue */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 13px; width: 13px; margin-right: 2px;
+  cursor: pointer;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M2 2l10 10M12 2L2 12' stroke='%23c1352c' stroke-width='2.4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* category sections */
+section {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  margin-bottom: 1.4rem;
+}
+section > .head {
+  display: flex; align-items: center; gap: 1rem;
+  padding: .9rem 1.1rem;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none;
+}
+section > .head:hover { border-color: var(--border-hi); }
+.category-name {
+  font-size: 1.25rem; letter-spacing: .12em; text-transform: uppercase;
+  color: #ddd0b8; flex: 1;
+}
+.category-name .tag {
+  font-size: .7rem; color: var(--text-dim); letter-spacing: .06em;
+  text-transform: none; display: block; margin-top: .15rem; font-style: italic;
+}
+.category-count { font-size: .8rem; color: var(--text-dim); letter-spacing: .05em; }
+.category-count b { color: var(--gold); }
+.mini-bar {
+  width: 90px; height: 6px; background: var(--bg);
+  border: 1px solid var(--border);
+}
+.mini-bar > div {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--blood), var(--gold));
+  transition: width .3s ease;
+}
+.chevron { color: var(--blood-hi); font-size: .8rem; transition: transform .25s; }
+section.collapsed .chevron { transform: rotate(-90deg); }
+section.collapsed .item-list { display: none; }
+
+/* subcategory headers */
+.subcat {
+  padding: .45rem .8rem .35rem;
+  font-size: .85rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold);
+  background: rgba(138,28,28,.06);
+  border-bottom: 1px solid rgba(58,46,38,.4);
+  border-top: 1px solid rgba(58,46,38,.4);
+  margin-top: -1px;
+}
+.subcat:first-child { border-top: none; margin-top: 0; }
+
+/* tabs (Titles / Achievements pages) */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-family: Cinzel, serif;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-button.active {
+  color: var(--gold);
+  border-bottom-color: var(--gold);
+}
+
+.tab-button:hover {
+  color: var(--text);
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Flat alphabetical list view (body.list-mode, toggled by the List button):
+   hide the tab bar and the sectioned content, show only the #list container.
+   Session-only — removing the class restores the default layout untouched. */
+#list { display: none; }
+body.list-mode .tabs,
+body.list-mode .tab-content,
+body.list-mode #regions { display: none; }
+body.list-mode #list { display: block; }
+
+.list-note {
+  padding: .6rem .8rem;
+  color: var(--text-dim); font-style: italic; font-size: .8rem;
+  border-bottom: 1px solid rgba(58,46,38,.4);
+}
+
+/* group dividers (Game / Season) */
+.group-header {
+  display: flex; align-items: center; gap: .9rem;
+  margin: 1.8rem 0 1rem;
+  color: var(--gold);
+  font-size: .78rem; font-weight: 700; letter-spacing: .24em; text-transform: uppercase;
+  user-select: none; white-space: nowrap;
+}
+.group-header::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border-hi), transparent);
+}
+
+/* collapsible subcategory headers */
+.subcat-group {
+  cursor: pointer;
+  display: flex; align-items: center; gap: .6rem;
+  padding: .45rem .8rem .35rem;
+  background: rgba(138,28,28,.06);
+  border-top: 1px solid rgba(58,46,38,.4);
+  border-bottom: 1px solid rgba(58,46,38,.4);
+  margin-top: -1px;
+  font-size: .85rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--gold);
+  user-select: none;
+}
+.subcat-group:first-child { border-top: none; margin-top: 0; }
+.collapse-arrow {
+  cursor: pointer; color: var(--blood-hi);
+  font-size: .7rem; width: 1em; text-align: center;
+  transition: transform .2s;
+}
+.subcat-group.collapsed .collapse-arrow { transform: rotate(-90deg); }
+.subcat-group.collapsed + .subcat-items { display: none; }
+.subcat-group .subcat-name { cursor: pointer; font-size: inherit; }
+.subcat-group .subcat-name:hover { filter: brightness(1.25); }
+.subcat-group .box { width: 13px; height: 13px; }
+.subcat-group .subcat-count { margin-left: auto; color: var(--text-dim); letter-spacing: .05em; font-size: .68rem; }
+.subcat-items { display: block; }
+
+/* checkbox styling */
+.gcheck { display: inline-flex; align-items: center; cursor: pointer; }
+.gcheck input { display: none; }
+.head .gcheck .box { width: 13px; height: 13px; }
+
+.item-list { display: block; }
+
+.item {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .5rem .8rem; cursor: pointer;
+  border-bottom: 1px solid rgba(58,46,38,.4);
+  transition: background .15s;
+  min-width: 0;
+}
+.item:hover { background: rgba(138,28,28,.08); }
+.item input { display: none; }
+.box {
+  width: 15px; height: 15px; flex: none;
+  border: 1px solid var(--border-hi); background: var(--bg);
+  position: relative; transition: all .15s;
+}
+input:checked + .box {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 8.5l3 3 6-7' fill='none' stroke='%23c9a34a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 78%;
+}
+
+/* rarity badge + colors (shared across pages) */
+.rarity { font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; flex: none; }
+.r-common    { color: var(--r-common); }
+.r-magic     { color: var(--r-magic); }
+.r-rare      { color: var(--r-rare); }
+.r-legendary { color: var(--r-legendary); }
+.r-unique    { color: var(--r-unique); }
+.r-mythic    { color: var(--r-mythic); }
+
+.item .name { flex: 0 0 auto; font-size: .8rem; white-space: nowrap; overflow: visible; text-overflow: clip; }
+
+/* Cosmetics page item rows: fixed-width name, type, detail and class columns,
+   then the description. Column widths are measured from the widest item value
+   by D4TK.create() (fitItemColumns) and set as CSS vars — a single outlier
+   value is ignored, so it truncates with an ellipsis instead. Full text on
+   hover (title attr). */
+.cosmetics-list .item .name {
+  flex: 0 0 var(--cos-name-w, 290px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cosmetics-list .item .item-type,
+.cosmetics-list .item .item-detail {
+  font-size: .62rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  white-space: nowrap; overflow: hidden;
+}
+.cosmetics-list .item .item-type   { flex: 0 0 var(--cos-type-w, 84px); }
+.cosmetics-list .item .item-detail { flex: 0 0 var(--cos-detail-w, 130px); }
+.cosmetics-list .item .item-class {
+  flex: 0 0 var(--cos-class-w, 104px);
+  font-size: .62rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  white-space: nowrap; overflow: hidden;
+}
+
+/* Right-aligned flag at the end of an item row: "Missing" or
+   "Unobtainable (no longer obtainable)", highlighted like the other pages.
+   Pinned flush right like the achievements' floated "no longer obtainable"
+   note — on rows with a flag the description gives up its auto margin. */
+.item .item-flag {
+  margin-left: auto;
+  flex: none;
+  font-size: .62rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.cosmetics-list .item:has(.item-flag) .info { margin-left: 0; }
+
+/* type column: one unique colour per type value */
+.type-drop      { color: #4a7fd6; }
+.type-quest     { color: #c9a34a; }
+.type-campaign  { color: #e8c33a; }
+.type-vendor    { color: #8fbf5f; }
+.type-challenge { color: #45c4a0; }
+.type-shop      { color: #e07b1f; }
+.type-reliquary { color: #b06fd6; }
+.type-secret    { color: #e0559b; }
+.type-missing   { color: #c1352c; }
+.type-other     { color: #a99f92; }
+/* "Missing from wardrobe" notes in descriptions, highlighted in the same
+   red as the Missing type */
+.missing-hit    { color: #c1352c; font-weight: 700; }
+/* "(No longer obtainable)" notes in feat descriptions, same red */
+.unobtainable-hit { color: #c1352c; font-weight: 700; }
+/* Achievement rows (default .item-list): when a description carries the
+   "no longer obtainable" note, let the description fill the row and float
+   the note to the right edge */
+.item-list .info:has(.unobtainable-hit) { flex: 1 1 auto; }
+.item-list .unobtainable-hit { float: right; }
+/* detail column: semantic colours for free/paid; other values get a
+   per-value hashed colour inline */
+.detail-free    { color: #6fbf73; }
+.detail-premium { color: #e0559b; }
+.cosmetics-list .item .info {
+  flex: 1 1 auto;
+  margin-left: auto;
+}
+
+/* class column: one colour per class, muted "All" when not class-locked */
+.class-all        { color: var(--text-dim); }
+.class-barbarian  { color: #e05545; }
+.class-druid      { color: #8fbf5f; }
+.class-necromancer { color: #45c4a0; }
+.class-paladin    { color: var(--gold); }
+.class-rogue      { color: #5f8fe0; }
+.class-sorcerer   { color: #58c7e8; }
+.class-spiritborn { color: #e08b3a; }
+.class-warlock    { color: #b06fd6; }
+.item.collected .name { color: var(--text-dim); text-decoration: line-through; text-decoration-color: currentColor; }
+.info {
+  font-size: .75rem; color: var(--text-dim); font-style: italic; flex: 0 1 auto;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  text-decoration: none; border-bottom: none;
+  transition: color .15s;
+}
+.info:hover { color: var(--gold); }
+.item.collected .info { text-decoration: line-through; }
+
+/* Grids of checkable items (fish cards etc.): always three columns for a
+   consistent UI. When the last row is not full, the last item expands over
+   the unused cells (two items: 3:1 and 3:2+3:3). The span is set by JS via
+   D4TK.layoutCheckGrid(). */
+.check-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+
+/* Item rows everywhere (trackers, fishing): the name always shows in full —
+   never truncated — and the description flows directly after it, truncating
+   with an ellipsis when too long and revealing in full on hover (title attr).
+   The .item-link icon (shared with the titles page) opens the source guide
+   when the item has a url. */
+.item-link {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-dim);
+  transition: color .15s;
+}
+.item-link:hover { color: var(--gold); }
+.item-link svg { display: block; }
+#categories .item .item-link { margin-left: auto; }
+
+/* footer */
+footer {
+  text-align: center; margin-top: 2.5rem;
+  color: var(--text-dim); font-size: .78rem; font-style: italic;
+  line-height: 1.7;
+}
+footer a { color: var(--gold); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+footer a.gh { color: #e8dcc3; }
+footer a.gh:hover { text-decoration: none; color: var(--gold); }
+footer a.gh svg { width: 20px; height: 20px; vertical-align: -4px; }
+footer a.ref { color: inherit; text-decoration: none; }
+footer a.ref:hover { text-decoration: underline; }
+
+/* toast notification */
+.toast {
+  position: fixed; bottom: 1.2rem; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--panel-2); border: 1px solid var(--border-hi); color: var(--text);
+  padding: .5rem .9rem; border-radius: 4px; font-size: .82rem;
+  opacity: 0; transition: opacity .25s, transform .25s;
+  z-index: 999; pointer-events: none; max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* data load error (CSV fetch failed — e.g. opened via file://) */
+.load-error {
+  margin: 2rem auto; max-width: 34rem; padding: 1rem 1.25rem;
+  border: 1px solid var(--blood); color: var(--text);
+  font-size: .85rem; line-height: 1.6; font-style: italic;
+}
+.load-error code { color: var(--gold); font-style: normal; }

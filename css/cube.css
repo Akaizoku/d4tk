@@ -1,0 +1,94 @@
+/* Horadric Cube page — collapsible recipe sections with name + description rows */
+
+.cube-intro {
+  margin: 0 0 1.4rem; padding: .8rem 1.1rem;
+  background: var(--panel); border: 1px solid var(--border);
+  font-size: .85rem; color: var(--text-dim); font-style: italic; line-height: 1.6;
+}
+
+.cube-sec {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  margin-bottom: 1.4rem;
+}
+.cube-head {
+  display: flex; align-items: center; gap: 1rem;
+  padding: .9rem 1.1rem;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; user-select: none;
+}
+.cube-head:hover { border-color: var(--border-hi); }
+.cube-head .chevron { color: var(--blood-hi); font-size: .8rem; transition: transform .25s; }
+.cube-sec.collapsed .chevron { transform: rotate(-90deg); }
+.cube-sec.collapsed .cube-list,
+.cube-sec.collapsed .prism-group { display: none; }
+
+#cube-search { width: 320px; }
+
+/* Tuning Prism groups: one group per prism, one row per affix */
+.prism-group { border-bottom: 1px solid rgba(58,46,38,.4); }
+.prism-group:last-child { border-bottom: none; }
+.prism-head {
+  display: flex; align-items: baseline; gap: .7rem;
+  padding: .55rem 1.1rem;
+  background: var(--panel-2);
+  border-bottom: 1px solid rgba(58,46,38,.4);
+  cursor: pointer;
+}
+.prism-head .chevron { color: var(--blood-hi); font-size: .8rem; transition: transform .25s; }
+.prism-group.collapsed .chevron { transform: rotate(-90deg); }
+.prism-group.collapsed .affix-list { display: none; }
+.prism-group.collapsed .prism-head { border-bottom: none; }
+.prism-name { font-size: .9rem; color: #ddd0b8; letter-spacing: .06em; }
+.prism-rarity { flex: none; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; }
+.prism-cat { flex: 1; min-width: 0; font-size: .75rem; color: var(--text-dim); font-style: italic; }
+.prism-count { font-size: .68rem; color: var(--text-dim); letter-spacing: .05em; }
+
+.affix-list {
+  list-style: none; margin: 0; padding: .2rem 0 .35rem;
+  display: grid; grid-template-columns: 1fr 1fr; column-gap: 1.5rem;
+}
+.affix-row {
+  padding: .3rem 1.1rem;
+  font-size: .8rem; color: var(--text);
+  border-bottom: 1px solid rgba(58,46,38,.25);
+}
+.affix-row:hover { background: rgba(138,28,28,.08); }
+.affix-note { color: var(--text-dim); font-style: italic; grid-column: 1 / -1; border-bottom: none; }
+.no-match { margin-top: 1.4rem; }
+.cube-name {
+  flex: 1;
+  font-size: 1.1rem; letter-spacing: .12em; text-transform: uppercase;
+  color: #ddd0b8;
+}
+.cube-name .tag {
+  font-size: .7rem; color: var(--text-dim); letter-spacing: .06em;
+  text-transform: none; display: block; margin-top: .15rem; font-style: italic;
+}
+.cube-count { font-size: .8rem; color: var(--text-dim); letter-spacing: .05em; }
+
+.cube-list { list-style: none; margin: 0; padding: .2rem 0 .4rem; }
+.cube-row {
+  display: flex; align-items: baseline; gap: .8rem;
+  padding: .5rem 1.1rem;
+  border-bottom: 1px solid rgba(58,46,38,.4);
+}
+.cube-row:last-child { border-bottom: none; }
+.cube-row:hover { background: rgba(138,28,28,.08); }
+.cube-row .name {
+  flex: none; width: 15rem;
+  font-size: .85rem; color: #ddd0b8; letter-spacing: .04em;
+}
+.cube-row .desc {
+  flex: 1; min-width: 0;
+  font-size: .78rem; color: var(--text-dim); font-style: italic; line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  .cube-row { flex-direction: column; gap: .15rem; padding: .5rem .8rem; }
+  .cube-row .name { width: auto; }
+  #cube-search { width: 100%; }
+  .affix-list { grid-template-columns: 1fr; column-gap: 0; }
+  .prism-head { flex-wrap: wrap; gap: .4rem; padding: .5rem .8rem; }
+}

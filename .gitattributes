@@ -1,0 +1,6 @@
+# Normalize line endings: text files check out with LF on every platform,
+# so Windows CRLF never shows up in diffs
+* text=auto eol=lf
+
+# Binary assets must never be touched by line-ending conversion
+*.webp binary

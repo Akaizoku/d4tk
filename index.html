@@ -1,557 +1,87 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fishing Tracker — Diablo IV</title>
-<style>
-  :root {
-    --bg: #0c0a09;
-    --panel: #141110;
-    --panel-2: #1a1614;
-    --border: #3a2e26;
-    --border-hi: #6b4f33;
-    --blood: #8a1c1c;
-    --blood-hi: #c1352c;
-    --text: #c9bba6;
-    --text-dim: #7d7160;
-    --gold: #c9a34a;
-    --r-common: #a99f92;
-    --r-magic: #4a7fd6;
-    --r-rare: #e8c33a;
-    --r-legendary: #e07b1f;
-    --r-unique: #b04ad6;
-    --r-mythic: #d63c3c;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background:
-      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(138,28,28,.22), transparent),
-      radial-gradient(ellipse 60% 40% at 90% 110%, rgba(60,20,10,.25), transparent),
-      var(--bg);
-    color: var(--text);
-    font-family: Georgia, 'Times New Roman', serif;
-    min-height: 100vh;
-    padding: 0 1rem 4rem;
-  }
-  .wrap { max-width: 880px; margin: 0 auto; }
-
-  .topnav {
-    background: linear-gradient(180deg, var(--panel-2), var(--panel));
-    border-bottom: 1px solid var(--border-hi);
-    box-shadow: 0 2px 14px rgba(138,28,28,.25);
-    margin-bottom: 2.2rem;
-  }
-  .topnav .inner {
-    max-width: 880px; margin: 0 auto;
-    display: flex; align-items: center; gap: 0; flex-wrap: wrap;
-    padding: 0 1rem;
-  }
-  .topnav .brand {
-    color: #e8dcc3; letter-spacing: .18em; text-transform: uppercase;
-    font-size: .8rem; padding: .7rem 1.2rem .7rem 0;
-    text-shadow: 0 0 10px rgba(193,53,44,.5);
-  }
-  .topnav .brand .bl { color: var(--blood-hi); }
-  .topnav a.tool {
-    color: var(--text-dim); text-decoration: none;
-    letter-spacing: .12em; text-transform: uppercase;
-    font-size: .72rem;
-    padding: .7rem 1.1rem;
-    border-left: 1px solid var(--border);
-    transition: color .2s, background .2s;
-  }
-  .topnav a.tool:hover { color: #e8dcc3; background: rgba(138,28,28,.12); }
-  .topnav a.tool.active {
-    color: var(--gold);
-    background: rgba(138,28,28,.18);
-    box-shadow: inset 0 -2px 0 var(--blood-hi);
-  }
-  .topnav .spacer { flex: 1; }
-
-  header { text-align: center; margin-bottom: 2rem; }
-  h1 {
-    font-size: clamp(1.6rem, 4vw, 2.4rem);
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: #e8dcc3;
-    text-shadow: 0 0 18px rgba(193,53,44,.45), 0 2px 2px #000;
-    font-weight: normal;
-  }
-  h1 .bl { color: var(--blood-hi); }
-  .subtitle {
-    margin-top: .4rem;
-    color: var(--text-dim);
-    font-style: italic;
-    font-size: .95rem;
-    letter-spacing: .04em;
-  }
-  .divider {
-    display: flex; align-items: center; gap: .8rem;
-    margin: 1.2rem auto 0; max-width: 520px; color: var(--blood-hi);
-  }
-  .divider::before, .divider::after {
-    content: ''; flex: 1; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--blood) 30%, var(--border-hi) 50%, var(--blood) 70%, transparent);
-  }
-
-  /* summary */
-  .summary {
-    display: flex; flex-wrap: wrap; gap: 1rem;
-    justify-content: center; align-items: center;
-    margin-bottom: 1.6rem;
-    font-size: .9rem;
-  }
-  .stat {
-    background: var(--panel); border: 1px solid var(--border);
-    padding: .5rem 1rem; letter-spacing: .06em;
-  }
-  .stat b { color: var(--gold); font-size: 1.05rem; }
-  .global-bar {
-    max-width: 520px; margin: 0 auto 2rem;
-    height: 8px; background: var(--panel-2);
-    border: 1px solid var(--border); position: relative;
-  }
-  .global-bar > div {
-    height: 100%; width: 0;
-    background: linear-gradient(90deg, var(--blood), var(--blood-hi), var(--gold));
-    transition: width .35s ease;
-  }
-
-  /* controls */
-  .controls {
-    display: flex; flex-wrap: wrap; gap: .6rem;
-    justify-content: center; margin-bottom: 2rem;
-  }
-  .controls button, .controls input {
-    background: var(--panel); color: var(--text);
-    border: 1px solid var(--border); padding: .45rem .9rem;
-    font-family: inherit; font-size: .85rem; letter-spacing: .05em;
-    cursor: pointer; transition: border-color .2s, color .2s;
-  }
-  .controls button:hover { border-color: var(--blood-hi); color: #e8dcc3; }
-  .controls input { cursor: text; width: 200px; }
-  .controls input::placeholder { color: var(--text-dim); font-style: italic; }
-  .controls input:focus { outline: none; border-color: var(--blood-hi); }
-
-  /* region sections */
-  section {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    margin-bottom: 1.4rem;
-  }
-  section > .head {
-    display: flex; align-items: center; gap: 1rem;
-    padding: .9rem 1.1rem;
-    background: linear-gradient(180deg, var(--panel-2), var(--panel));
-    border-bottom: 1px solid var(--border);
-    cursor: pointer; user-select: none;
-  }
-  section > .head:hover { border-color: var(--border-hi); }
-  .region-name {
-    font-size: 1.05rem; letter-spacing: .12em; text-transform: uppercase;
-    color: #ddd0b8; flex: 1;
-  }
-  .region-name .tag {
-    font-size: .7rem; color: var(--text-dim); letter-spacing: .06em;
-    text-transform: none; display: block; margin-top: .15rem; font-style: italic;
-  }
-  .region-count { font-size: .8rem; color: var(--text-dim); letter-spacing: .05em; }
-  .region-count b { color: var(--gold); }
-  .mini-bar {
-    width: 90px; height: 6px; background: var(--bg);
-    border: 1px solid var(--border);
-  }
-  .mini-bar > div {
-    height: 100%; width: 0;
-    background: linear-gradient(90deg, var(--blood), var(--gold));
-    transition: width .3s ease;
-  }
-  .chevron { color: var(--blood-hi); font-size: .8rem; transition: transform .25s; }
-  section.collapsed .chevron { transform: rotate(-90deg); }
-  section.collapsed .fish-list { display: none; }
-
-  .fish-list { display: block; }
-
-  .rarity-group {
-    cursor: pointer;
-    display: flex; align-items: center; gap: .6rem;
-    padding: .4rem .8rem .35rem;
-    background: var(--panel-2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid rgba(58,46,38,.4);
-    font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
-    user-select: none;
-  }
-  .gcheck { display: inline-flex; align-items: center; cursor: pointer; }
-  .gcheck input { display: none; }
-  .collapse-arrow {
-    cursor: pointer; color: var(--blood-hi);
-    font-size: .7rem; width: 1em; text-align: center;
-    transition: transform .2s;
-  }
-  .rarity-group.collapsed .collapse-arrow { transform: rotate(-90deg); }
-  .rarity-group.collapsed + .fish-grid { display: none; }
-  .fish-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-  .rarity-group .rarity-name { cursor: pointer; font-size: inherit; }
-  .rarity-group .rarity-name:hover { filter: brightness(1.25); }
-  .rarity-group .box { width: 13px; height: 13px; }
-  .rarity-group .rarity-count { margin-left: auto; color: var(--text-dim); letter-spacing: .05em; font-size: .68rem; }
-
-  .fish {
-    display: flex; align-items: center; gap: .6rem;
-    padding: .5rem .8rem; cursor: pointer;
-    border-bottom: 1px solid rgba(58,46,38,.4);
-    transition: background .15s;
-  }
-  .fish:hover { background: rgba(138,28,28,.08); }
-  .fish input { display: none; }
-  .box {
-    width: 15px; height: 15px; flex: none;
-    border: 1px solid var(--border-hi); background: var(--bg);
-    position: relative; transition: all .15s;
-  }
-  input:checked + .box { background: var(--blood); border-color: var(--blood-hi); }
-  input:checked + .box::after {
-    content: '✕'; position: absolute; inset: 0;
-    display: flex; align-items: center; justify-content: center;
-    color: #f3e6c8; font-size: .7rem; line-height: 1;
-  }
-  .name { flex: 1; font-size: .92rem; }
-  .fish.caught .name { color: var(--text-dim); text-decoration: line-through; text-decoration-color: rgba(138,28,28,.7); }
-  .rarity { font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; flex: none; }
-  .r-common    { color: var(--r-common); }
-  .r-magic     { color: var(--r-magic); }
-  .r-rare      { color: var(--r-rare); }
-  .r-legendary { color: var(--r-legendary); }
-  .r-unique    { color: var(--r-unique); }
-  .r-mythic    { color: var(--r-mythic); }
-
-  footer {
-    text-align: center; margin-top: 2.5rem;
-    color: var(--text-dim); font-size: .78rem; font-style: italic;
-    line-height: 1.7;
-  }
-  footer a { color: var(--gold); text-decoration: none; }
-  footer a:hover { text-decoration: underline; }
-</style>
+<link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap">
+<title>D4TK - Overview</title>
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/overview.css">
 </head>
 <body>
-<div class="wrap">
-  <nav class="topnav">
-    <div class="inner">
-      <span class="brand">D4 <span class="bl">Toolkit</span></span>
-      <span class="spacer"></span>
-      <a class="tool active" href="index.html">Fishing</a>
-      <a class="tool" href="cow.html">Cows</a>
+<nav class="topnav">
+  <div class="inner">
+    <a class="brand" href="index.html">D4 <span class="bl">Toolkit</span></a>
+    <span class="tool wb-timer" id="wb-timer" title="Next world boss spawn (local time)">World boss …</span>
+    <span class="spacer"></span>
+    <span class="nav-active-label">Overview</span>
+    <div class="burger" id="burger">
+      <button class="burger-btn" id="burger-btn" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <div class="burger-menu" id="burger-menu">
+        <a class="tool" href="achievements.html">Achievements</a>
+        <a class="tool" href="cosmetics.html">Cosmetics</a>
+        <a class="tool" href="cow.html">Cows</a>
+        <a class="tool" href="cube.html">Cube</a>
+        <a class="tool" href="experience.html">Experience</a>
+        <a class="tool" href="fishing.html">Fishing</a>
+        <a class="tool" href="references.html">References</a>
+        <a class="tool" href="runes.html">Runes</a>
+        <a class="tool" href="titles.html">Titles</a>
+      </div>
     </div>
-  </nav>
+  </div>
+</nav>
+<div class="wrap">
   <header>
-    <h1>Fishing <span class="bl">Tracker</span></h1>
-    <p class="subtitle">A record of every fish that swims the waters of Sanctuary</p>
+    <h1>Tracker <span class="bl">Overview</span></h1>
+    <p class="subtitle">Completion dashboard</p>
     <div class="divider">⚜</div>
   </header>
 
-  <div class="summary">
-    <div class="stat">Caught <b id="stat-caught">0</b> / <span id="stat-total">0</span></div>
-    <div class="stat">Regions complete <b id="stat-regions">0</b> / 8</div>
-  </div>
-  <div class="global-bar"><div id="global-fill"></div></div>
-
-  <div class="controls">
-    <input type="search" id="search" placeholder="Search the waters…" aria-label="Search fish">
-    <button id="btn-hide-caught">Hide Caught</button>
-    <button id="btn-expand">Collapse All</button>
-    <button id="btn-reset">Reset Ledger</button>
-    <button id="btn-export">Export</button>
-    <button id="btn-import">Import</button>
-    <input type="file" id="import-file" accept="application/json,.json" style="display:none">
-  </div>
-
-  <main id="regions"></main>
+  <main id="trackers" class="tracker-grid">
+    <a class="tracker-card" href="achievements.html">
+      <div class="card-head"><span class="card-name">Achievements</span><span class="card-pct" id="pct-achievements">–</span></div>
+      <div class="card-bar"><div id="bar-achievements"></div></div>
+      <div class="card-meta" id="meta-achievements">Loading…</div>
+      <div class="card-desc">Every in-game challenge</div>
+    </a>
+    <a class="tracker-card" href="cosmetics.html">
+      <div class="card-head"><span class="card-name">Cosmetics</span><span class="card-pct" id="pct-cosmetics">–</span></div>
+      <div class="card-bar"><div id="bar-cosmetics"></div></div>
+      <div class="card-meta" id="meta-cosmetics">Loading…</div>
+      <div class="card-desc">Every obtainable cosmetic item</div>
+    </a>
+    <a class="tracker-card" href="fishing.html">
+      <div class="card-head"><span class="card-name">Fishing</span><span class="card-pct" id="pct-fishing">–</span></div>
+      <div class="card-bar"><div id="bar-fishing"></div></div>
+      <div class="card-meta" id="meta-fishing">Loading…</div>
+      <div class="card-desc">Every fish that swims the waters of Sanctuary</div>
+    </a>
+    <a class="tracker-card" href="titles.html">
+      <div class="card-head"><span class="card-name">Titles</span><span class="card-pct" id="pct-titles">–</span></div>
+      <div class="card-bar"><div id="bar-titles"></div></div>
+      <div class="card-meta" id="meta-titles">Loading…</div>
+      <div class="card-desc">Every obtainable title (prefix and suffix)</div>
+    </a>
+  </main>
 
   <footer>
-    Unofficial fan-made tracker for Diablo IV — data per patch 3.2.x (Season 15).<br>
-    Click any fish to mark it caught · progress is saved in your browser.
+    Unofficial fan-made tool for Diablo IV — not affiliated with Blizzard Entertainment · Season 15 (patch 3.2.4).<br>
+    Sources and further details: <a class="ref" href="references.html">References</a><br>
+    <a class="gh" href="https://github.com/Akaizoku/d4tk" target="_blank" rel="noopener" aria-label="D4TK on GitHub" title="D4TK on GitHub"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a>
   </footer>
 </div>
 
-<script>
-(function () {
-  'use strict';
-
-  var LEG_TRAITS  = ['Tiny', 'Giant', 'Glittering', 'Demonic', 'Celestial', 'Spectral'];
-  var UNIQ_COMBOS = [
-    ['Tiny','Demonic'], ['Tiny','Celestial'], ['Tiny','Spectral'],
-    ['Giant','Demonic'], ['Giant','Celestial'], ['Giant','Spectral'],
-    ['Glittering','Demonic'], ['Glittering','Celestial'], ['Glittering','Spectral']
-  ];
-
-  var REGIONS = [
-    { name: 'Throughout Sanctuary', tag: 'Catchable in any body of water', fish: [
-      ['Saltfin','Common'], ['Bluescale','Common'], ['Glimmer','Common'],
-      ['Silverbelly','Magic'], ['Darkling','Magic']
-    ]},
-    { name: 'Scosglen',         base: 'Drakonbeard' },
-    { name: 'Fractured Peaks', base: 'Morayaga' },
-    { name: 'Dry Steppes',      base: 'Augur of Civo' },
-    { name: 'Kehjistan',        base: 'Zakarati' },
-    { name: 'Hawezar',          base: 'Crookfish' },
-    { name: 'Nahantu',          base: 'Neme-Senga' },
-    { name: 'Skovos',           base: 'Kokalodon' },
-    { name: 'Mythic Uniques', tag: 'Fish of legend — special waters only', fish: [
-      ['Molten Martyr','Mythic','Pools of lava'],
-      ['Ghoulworm','Mythic','Pools of blood'],
-      ['Fang of Tathamet','Mythic','Helltides'],
-      ['Dune Thresher Hatchling','Mythic','Sandy dunes'],
-      ['Vivid Whimsy','Mythic','Somewhere in Sanctuary']
-    ]},
-    { name: 'Khanduras', tag: 'Echoes of Tristram', fish: [
-      ['Red Herring','Rare']
-    ]}
-  ];
-
-  REGIONS.forEach(function (r) {
-    if (!r.fish) {
-      r.fish = [[r.base, 'Rare']];
-      LEG_TRAITS.forEach(function (t) { r.fish.push([t + ' ' + r.base, 'Legendary']); });
-      UNIQ_COMBOS.forEach(function (c) { r.fish.push([c.join(' ') + ' ' + r.base, 'Unique']); });
-    }
-    r.id = r.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  });
-
-  var STORE_KEY = 'd4-angler-ledger-v1';
-  var caught = {};
-  try { caught = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; } catch (e) { caught = {}; }
-
-  var opts = { hideCaught: false };
-
-  var regionsEl = document.getElementById('regions');
-  var sectionEls = [];
-
-  function save() {
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(caught)); } catch (e) {}
-  }
-
-  function build() {
-    REGIONS.forEach(function (r) {
-      var sec = document.createElement('section');
-      sec.dataset.region = r.id;
-
-      var head = document.createElement('div');
-      head.className = 'head';
-      head.innerHTML =
-        '<span class="chevron">▼</span>' +
-        '<label class="gcheck"><input type="checkbox">' +
-        '<span class="box"></span></label>' +
-        '<span class="region-name">' + r.name +
-        (r.tag ? '<span class="tag">' + r.tag + '</span>' : '') +
-        '</span>' +
-        '<span class="mini-bar"><div></div></span>' +
-        '<span class="region-count"><b>0</b> / ' + r.fish.length + '</span>';
-      var headBox = head.querySelector('.gcheck input');
-      headBox.addEventListener('change', function () {
-        sec.querySelectorAll('.fish').forEach(function (el) {
-          var id = el.dataset.id;
-          if (headBox.checked) caught[id] = true; else delete caught[id];
-        });
-        save(); refresh();
-      });
-      head.addEventListener('click', function (e) {
-        if (head.querySelector('.gcheck').contains(e.target)) return;
-        sec.classList.toggle('collapsed');
-      });
-      sec.appendChild(head);
-
-      var list = document.createElement('div');
-      list.className = 'fish-list';
-      var byRarity = {};
-      r.fish.forEach(function (f) {
-        (byRarity[f[1]] = byRarity[f[1]] || []).push(f);
-      });
-      ['Common','Magic','Rare','Legendary','Unique','Mythic'].forEach(function (rar) {
-        if (!byRarity[rar]) return;
-        var group = document.createElement('div');
-        group.className = 'rarity-group';
-        group.innerHTML =
-          '<span class="collapse-arrow">▼</span>' +
-          '<label class="gcheck"><input type="checkbox">' +
-          '<span class="box"></span></label>' +
-          '<span class="rarity-name rarity r-' + rar.toLowerCase() + '">' + rar + '</span>' +
-          '<span class="rarity-count"></span>';
-        group.addEventListener('click', function (e) {
-          if (group.querySelector('.gcheck').contains(e.target)) return;
-          group.classList.toggle('collapsed');
-        });
-        var groupBox = group.querySelector('.gcheck input');
-        groupBox.addEventListener('change', function () {
-          byRarity[rar].forEach(function (f) {
-            var id = r.id + ':' + f[0].toLowerCase().replace(/[^a-z0-9]+/g, '-');
-            if (groupBox.checked) caught[id] = true; else delete caught[id];
-          });
-          save(); refresh();
-        });
-        var arrow = group.querySelector('.collapse-arrow');
-        arrow.addEventListener('click', function (e) {
-          e.stopPropagation();
-          group.classList.toggle('collapsed');
-        });
-        list.appendChild(group);
-
-        var grid = document.createElement('div');
-        grid.className = 'fish-grid';
-        byRarity[rar].forEach(function (f) {
-          var id = r.id + ':' + f[0].toLowerCase().replace(/[^a-z0-9]+/g, '-');
-          var note = f[2];
-          var label = document.createElement('label');
-          label.className = 'fish';
-          label.dataset.id = id;
-          label.dataset.name = f[0].toLowerCase();
-          label.title = note ? r.name + ' — ' + note : r.name;
-          label.innerHTML =
-            '<input type="checkbox"' + (caught[id] ? ' checked' : '') + '>' +
-            '<span class="box"></span>' +
-            '<span class="name">' + f[0] + '</span>';
-          var box = label.querySelector('input');
-          box.addEventListener('change', function () {
-            if (box.checked) caught[id] = true; else delete caught[id];
-            save(); refresh();
-          });
-          grid.appendChild(label);
-        });
-        list.appendChild(grid);
-      });
-      sec.appendChild(list);
-      regionsEl.appendChild(sec);
-      sectionEls.push(sec);
-    });
-  }
-
-  function refresh() {
-    var total = 0, caughtCount = 0, regionsDone = 0;
-    REGIONS.forEach(function (r, i) {
-      var sec = sectionEls[i];
-      var n = 0;
-      sec.querySelectorAll('.fish').forEach(function (el) {
-        var inp = el.querySelector('input');
-        inp.checked = !!caught[el.dataset.id];
-        var isCaught = inp.checked;
-        el.classList.toggle('caught', isCaught);
-        el.style.display = (opts.hideCaught && isCaught) ? 'none' : '';
-        if (isCaught) n++;
-      });
-      sec.querySelectorAll('.rarity-group').forEach(function (g) {
-        var grid = g.nextElementSibling;
-        var items = grid.querySelectorAll('.fish');
-        var gn = grid.querySelectorAll('.fish input:checked').length;
-        g.querySelector('.gcheck input').checked = gn === items.length && items.length > 0;
-        g.querySelector('.rarity-count').textContent = gn + ' / ' + items.length;
-      });
-      var headBox = sec.querySelector('.head .gcheck input');
-      var fishBoxes = sec.querySelectorAll('.fish input');
-      headBox.checked = n === r.fish.length && fishBoxes.length > 0;
-      var done = n === r.fish.length;
-      if (done) regionsDone++;
-      sec.querySelector('.region-count b').textContent = n;
-      sec.querySelector('.mini-bar div').style.width = (n / r.fish.length * 100) + '%';
-      sec.querySelector('.region-count').style.color = done ? 'var(--gold)' : '';
-      total += r.fish.length; caughtCount += n;
-    });
-    document.getElementById('stat-caught').textContent = caughtCount;
-    document.getElementById('stat-total').textContent = total;
-    document.getElementById('stat-regions').textContent = regionsDone;
-    document.getElementById('global-fill').style.width = (caughtCount / total * 100) + '%';
-    applySearch();
-  }
-
-  function applySearch() {
-    var q = document.getElementById('search').value.trim().toLowerCase();
-    sectionEls.forEach(function (sec) {
-      var any = false;
-      sec.querySelectorAll('.fish').forEach(function (el) {
-        var match = !q || el.dataset.name.indexOf(q) !== -1;
-        var hidden = opts.hideCaught && el.classList.contains('caught');
-        el.style.display = (match && !hidden) ? '' : 'none';
-        if (match && !hidden) any = true;
-      });
-      sec.style.display = any ? '' : 'none';
-    });
-  }
-
-  document.getElementById('search').addEventListener('input', applySearch);
-
-  document.getElementById('btn-hide-caught').addEventListener('click', function () {
-    opts.hideCaught = !opts.hideCaught;
-    this.textContent = opts.hideCaught ? 'Show Caught' : 'Hide Caught';
-    refresh();
-  });
-
-  document.getElementById('btn-expand').addEventListener('click', function () {
-    var anyOpen = sectionEls.some(function (s) { return !s.classList.contains('collapsed'); });
-    sectionEls.forEach(function (s) { s.classList.toggle('collapsed', anyOpen); });
-    this.textContent = anyOpen ? 'Expand All' : 'Collapse All';
-  });
-
-  document.getElementById('btn-export').addEventListener('click', function () {
-    var payload = {
-      app: 'd4-fishing-tracker',
-      version: 1,
-      exported: new Date().toISOString(),
-      caught: Object.keys(caught)
-    };
-    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'fishing-tracker-backup-' + new Date().toISOString().slice(0, 10) + '.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  });
-
-  document.getElementById('btn-import').addEventListener('click', function () {
-    document.getElementById('import-file').click();
-  });
-
-  document.getElementById('import-file').addEventListener('change', function () {
-    var file = this.files[0];
-    this.value = '';
-    if (!file) return;
-    var reader = new FileReader();
-    reader.onload = function () {
-      var data;
-      try { data = JSON.parse(reader.result); } catch (e) {
-        alert('Not a valid backup file.');
-        return;
-      }
-      var ids = (data && Array.isArray(data.caught)) ? data.caught : null;
-      if (!ids) {
-        alert('Not a valid backup file.');
-        return;
-      }
-      caught = {};
-      ids.forEach(function (id) { caught[id] = true; });
-      save();
-      location.reload();
-    };
-    reader.readAsText(file);
-  });
-
-  document.getElementById('btn-reset').addEventListener('click', function () {
-    if (!confirm('Cast aside the entire ledger? All progress will be lost.')) return;
-    caught = {};
-    save();
-    sectionEls.forEach(function (s) { s.querySelectorAll('input').forEach(function (i) { i.checked = false; }); });
-    refresh();
-  });
-
-  build();
-  refresh();
-})();
-</script>
+<script src="js/tracker.js"></script>
+<script src="js/data/achievements-data.js"></script>
+<script src="js/data/cosmetics-data.js"></script>
+<script src="js/data/fishing-data.js"></script>
+<script src="js/data/titles-data.js"></script>
+<script src="js/overview.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/worldboss.js"></script>
 </body>
 </html>
